@@ -1,0 +1,1634 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>reveal.js</title>
+
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="dist/theme/black.css">
+
+  <!-- Theme used for syntax highlighted code -->
+  <link rel="stylesheet" href="plugin/highlight/tokyo-night-dark.min.css">
+  <style>
+.reveal h1,.reveal h2,.reveal h3,.reveal h4,.reveal h5,.reveal h6{
+  text-transform: initial;
+}
+:root{
+  --r-main-font-size:30px;
+}
+.reveal{
+  letter-spacing:1px;
+}
+.reveal p{
+  margin:var(--r-block-margin) auto;
+  width:fit-content;
+  max-width:1100px;
+  text-align:left;
+}
+.reveal li>p{
+  width:initial;
+}
+.reveal .small {
+  font-size:0.8em;
+}
+.reveal .code-wrapper{
+  max-width:900px;
+}
+.reveal .katex{
+  margin:0.2em;
+}
+.reveal p>code{
+  margin:0.2em;
+}
+#triangle{
+  height: 400px;
+  width: 350px;
+  position: absolute;
+  top: 150px;
+  left: 0;
+}
+  </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+<section>
+  <h1>Dynamic Programming</h1>
+  <p style="font-size:0.6em">深圳大学</p>
+  <p>z7z_Eta</p>
+</section>
+<section data-markdown><script type="text/template">
+    ## 引言
+
+    > 成也DP，败也DP。
+
+    > DP就是Dalao Power的缩写。--jz集训
+
+    受命以来，苦心俯卷数月，作此篇章，意在不辱算法之魂。不求尽其详，助君略动规大观，解动规之惑也。
+
+    课件题目取自luogu，牛客，codeforces和atcoder。请同学提前注册账号。
+    <!-- .element: class="small" -->
+</script></section>
+<section>
+  <section>
+    <h2>About Me</h2>
+    <p class="small">为什么会变成这样呢...第一次写了这么长的课件。修了很多很多的选修。两件麻烦<sup>面倒くさいな</sup>事情重合在一起。而这两份事情，又给我带来更多的麻烦<sup>面倒くさい</sup>。得到的，本该是像噩梦一般自闭的时间...但是，为什么，会变成这样呢...</p>
+    <p class="small">最喜欢的代码编辑器是Vim。不不不，这种难用的编辑器绝对不能提倡吧！这可是要把萌新拉入Linux巨坑啊。不过，Vim很有趣呢。你用Vim写题吗？是的。写ACM题，也写点网页摸鱼。别一脸飒爽地对新生说这种乱七八糟的事情啊！新生可是要学算法的！↗そうなんだ↗...不过我也很喜欢摸鱼♥，所以不要紧的。
+    p>
+    <p class="small">自我介绍部分加入各种私货果然还是太奇怪了，在后面慢慢放×</p>
+    <!-- <p>注释里面偷偷写一下自己的经历</p> -->
+    <!-- <p>高中是石家庄二中，从高一开始学，只参加了一年NOIp和省选，最终省队线差一名无缘NOI</p> -->
+    <!-- <p>icpc2021南京Ag icpc2021西安ec-final Cu</p> -->
+  </section>
+  <section>
+    <div class="r-stack">
+      <img class="fragment" src="public/樱之诗_1.png" alt="樱之诗_1.png">
+      <img class="fragment" src="public/樱之诗_2.png" alt="樱之诗_2.png">
+      <img class="fragment" src="public/樱之诗_3.png" alt="樱之诗_3.png">
+      <img class="fragment" src="public/樱之诗_4.png" alt="樱之诗_4.png">
+      <img class="fragment" src="public/樱之诗_5.png" alt="樱之诗_5.png">
+    </div>
+  </section>
+</section>
+<section>
+  <section data-markdown><script type="text/template">
+      ## 一些符号及约定
+
+      ### 关于宏定义
+
+      ```cpp
+      #define rep(i,s,t) for(int i=(s);i<=(t);i++) //循环宏定义
+      #define rev_rep(i,s,t) for(int i=(s);i>=(t);i--)
+      using ll = long long; //类型别名(c++14)
+      int ci(){ int x; scanf("%d", &x); return x; } //读入封装
+
+      enum{N=100023, M=(1<<16)+5}; //枚举型常量
+      ```
+      <!-- .element: class="fragment" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ### 关于时间空间复杂度
+
+      时间复杂度是衡量程序做基本运算的次数与数据大小的粗略关系。
+      (TODO:语病？)
+      <!-- .element: class="fragment" -->
+
+      <div>
+
+        * 指数级是指$n$作为指数的复杂度，如$O(2^n),O(3^n),O(n!)$
+
+        * 多项式级是指关于$n$的$k$次多项式复杂度，与指数级相对，如$O(n^4),O(n^2\log n)$
+      </div>
+      <!-- .element: class="fragment" -->
+
+      在$n$是$10000$以上时，也有下面几个讨论:
+      <!-- .element: class="fragment" -->
+
+      <div>
+
+        * $polylog(n)$是指$n$乘一个$\log n$级别的多项式的复杂度，如$O(n\log n),O(n\log^2 n),O(n\log n\log\log n)$
+
+        * 带根号，指带$\sqrt n$的复杂度，如$O(n\sqrt n),O(n\sqrt{n\log n})$
+
+        * 线性，$O(n)$
+      </div>
+      <!-- .element: class="fragment" -->
+
+      **常数小**指的是算法之间复杂度是一样的，但是程序跑不到复杂度上限或者是单次基本运算简单，使得程序运行速度变得很快
+      <!-- .element: class="fragment" -->
+
+      ---
+
+      ### 空间复杂度
+
+      以下表格展示了数据范围与内存空间限制的对应关系
+
+      假如$n=10^5$
+      <!-- .element: class="fragment" -->
+
+      ||||
+      |-|-|-|
+      |16M|128M|1024M|
+      |$O(n)$|$O(n\log n)$|$O(n\log^2 n)$|
+      <!-- .element: class="fragment" -->
+
+      假如$n=10^3$
+      <!-- .element: class="fragment" -->
+
+      |||
+      |-|-|
+      |64K|64M|
+      |$O(n)$|$O(n^2)$|
+      <!-- .element: class="fragment" -->
+
+      ---
+
+      ### 关于dp方程
+
+      `$$\begin{aligned}
+      f_i = \ &\max_{j\le i}\{\ f_j+c_i+(i-j)^2\ \}\\
+      &\Updownarrow\\
+      f_i = \ & f_j+c_i+(i-j)^2,\ \exists j\le i, \text{Maximize} f_i\\
+      &\Updownarrow\\
+      f_i \leftarrow & f_j+c_i+(i-j)^2
+      \end{aligned}$$`
+      <!-- .element: class="fragment" style="float:left"-->
+
+      ```cpp 
+      #include<algorithm>
+
+      rep(i,1,n){
+          rep(j,1,i){
+              f[i] = max(f[i], f[j]+c[i]+(i-j)*(i-j));
+          }
+      }
+      ```
+      <!-- .element: class="fragment" style="width:600px;float:right"-->
+
+      为了便于理解，本课件的所有问题我都会尽量写明dp方程，~~但不一定给代码实现~~
+      <!-- .element: class="fragment" style="clear:both"-->
+
+      ---
+
+      ### 关于位运算
+
+      二进制表示`$(x)_2=a_k a_{k-1}\dots a_1 a_0$`，那么`$x=a_0*1+a_1*2+\dots +a_k*2^k$`
+
+      |||
+      |-|-|
+      |$2^k$|`1ll<<k`|
+      |$111111\text{(n个1)}$|`(1<<n)-1`|
+      |$(x)_2[k]\text{(x第k位)}$|`(x>>k)&1`|
+      |$lowbit(x)$|`x&-x`|
+      |$highbit(x)$|$\lfloor$`log2(x)`$\rfloor$|
+      <!-- .element: class="fragment" -->
+
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 从递推开始说起
+
+      ---
+
+      ## 汉诺塔问题
+
+      这个问题有个~~塔诺西~~的背景故事。
+
+      ![汉诺塔_具体数学.png](public/汉诺塔_具体数学.png)
+      <!-- .element: class="fragment" style="height:500px" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ![汉诺塔.png](public/汉诺塔.png)
+      <!-- .element: class="fragment" style="height:300px;float:left" -->
+
+      可以递归地去想最小步数。
+      <!-- .element: class="fragment" -->
+
+      设$n$个圆盘从A放到C的最小步数是$f_n$。
+      <!-- .element: class="fragment" -->
+
+      在从A上拿走最大的圆盘$n$之前，必须要先将$n-1$拿走，放在另一个位置B，才能够把圆盘$n$移动到C。
+      <!-- .element: class="fragment" -->
+
+      <div>
+
+        * 将$n-1$个圆盘从A放到B和$f_{n-1}$的问题是等价的，代价是$f_{n-1}$。
+        
+        * 之后我们将圆盘$n$移动到C，代价是$1$。
+      </div>
+      <!-- .element: class="fragment" -->
+
+      然后我们需要将B上的$n-1$个圆盘放到C，与$f_{n-1}$等价，代价是$f_{n-1}$。最终的公式是:
+      <!-- .element: class="fragment" -->
+
+      `$$f_i = f_{i-1}*2+1$$`
+      <!-- .element: class="fragment" -->
+
+      ---
+
+      ## 各种递推数列
+
+      斐波那契数: 第i个月的兔子数量(递归思想)
+      <!-- .element: class="fragment" -->
+
+      $Fib_i = Fib_{i-1}+Fib_{i-2}$
+      <!-- .element: class="fragment" -->
+
+      ```
+      1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89...
+      ```
+      <!-- .element: class="fragment" -->
+
+      卡特兰数: 二叉树计数(枚举左右子树)
+      <!-- .element: class="fragment" -->
+
+      $Cat_{i+1} = \sum_{j=0}^iCat_{j}*Cat_{i-j}$
+      <!-- .element: class="fragment" -->
+
+      ```
+      1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862...
+      ```
+      <!-- .element: class="fragment" -->
+  </script></section>
+</section>
+<section data-markdown=""><script type="text/template">
+    ## dp与递推
+
+    <div>
+      显然，递推数列的每一个数字都可以单独作为一个问题的答案。
+      
+      和递推一样，dp会使用子问题来描述当前问题之前的问题。
+    </div>
+    <!-- .element: class="fragment" -->
+
+    <div>
+
+      * 过程中的子问题被称为**状态**。
+      
+      * 当前问题从子问题中得到解叫做**状态转移**。
+      
+      * 当前问题与子问题答案的关系式就是**状态转移方程**。(dp方程)
+    </div>
+    <!-- .element: class="fragment" -->
+</script></section>
+<section data-markdown="" data-state="triangle"><script type="text/template">
+    ## 数字三角形 [IOI1994] The_Triangle 
+
+    状态$f_{i,j}$表示当前在第$i$行第$j$列的位置，$(i,j)$走向两个位置，$(i+1,j)$和$(i+1,j+1)$，递归到最后一层答案就只有一个数字了。我们只要取两个位置的更大的值加上这个位置原来的值，就是$f_{i,j}$的答案。
+
+    `$$\begin{aligned}
+    f_{i,j} = \max\{f_{i+1,j}, f_{i+1,j+1}\}+a_{i,j}
+    \end{aligned}$$`
+
+    `$$Ans = f_{1,1}$$`
+
+    发现递归只会在**回溯**的时候得到新答案，如果倒着枚举行数，就不需要函数递归了。
+
+    ```
+    ```
+
+    ---
+
+    实际上从下向上走也可以得到结果，正确性是显然的。但是注意在每一行的边界位置上，只有一个方向可以转移。我们可以特判，也可以把无法转移的位置赋值成$-\inf$。
+
+    `$$\begin{aligned}
+    f_{i,j} = \max\{f_{i-1,j-1}, f_{i-1,j}\}+a_{i,j}
+    \end{aligned}$$`
+
+    `$$Ans = \max_i f_{n,i}$$`
+
+    <div id="triangle"></div>
+    <textarea id="triangle-input" cols="25" rows="5">3
+    5
+    2 1
+    3 4 6</textarea>
+    <button onclick="">commit</button>
+
+    暴力搜索复杂度是$2^n$，而dp做法复杂度只有$n^2$，可以看出，动态规划能把复杂度从**指数级**优化到**多项式级**。
+</script></section>
+<section data-markdown=""><script type="text/template">
+    ## 滑雪
+
+    https://www.luogu.com.cn/problem/P1434
+    同样可以递归考虑，走过的序列是单调下降的，所以可以递归求解，如果走到了一个*底谷*，在此处的答案就是$0$。于是可以用**记忆化搜索**解决该问题。
+
+    `$$\begin{aligned}
+    f_{i,j} = \max_{a_{i',j'}<a_{i,j}, |i'-i|+|j'-j|\le 1}\{f_{i',j'}\}+1
+    \end{aligned}$$`
+
+    `$$Ans = \max_{i,j} f_{i,j}$$`
+
+    在这个例子中我们每个位置只有被第一次访问时得到答案，在之后的访问只会立刻返回结果。所以复杂度是$O(nm)$。原理同样是子问题的重复利用。
+</script></section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      <!-- .slide: style="font-size:25px" -->
+      ## LCS与LIS问题
+
+      * 最长公共子序列（Longest Common Subsequence）
+
+        给定一个长度为$n$的序列$A$和一个长度为$m$的序列$B(n,m\le 5000)$，求出一个最长的序列，使得该序列既是$A$的子序列，也是$B$的子序列。
+
+      * 最长上升子序列（Longest Increasing Subsequence）
+
+        给定一个长度为$n$的序列$A(n\le 5000)$，求出一个最长的子序列，满足该子序列的每一个元素大于前一个元素。
+
+      * 子序列Subsequence
+      <!-- .element: class="small" -->
+
+        从序列$A\langle n\rangle$中选择`$k(0\le k\le n)$`个元素组成子序列`$B\langle k\rangle=\{A_{p_1}A_{p_2}\dots A_{p_k}\}$`，并保持相对位置不变`$(p_1<p_2<\dots <p_k)$`。
+        <!-- .element: class="small" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ## LCS
+
+      $f_{i,j}$表示$s$的前缀$i$和$t$的前缀$j$的LCS长度。如果$s_i$和$t_i$相同，LCS长度可以是$f_{i-1,j-1}$加一。其他位置$(x,y)$只要满足$x<i, y<j$就可以转移，这些没有直接贡献，所以我们取两个最小单位$(i-1,j)$和$(i,j-1)$转移。
+
+      `$$\begin{aligned}
+      f_{i,j} &= f_{i-1,j-1}+1\qquad A_i=B_j\\
+      f_{i,j} &= \max\{f_{i-1,j}, f_{i,j-1}\}
+      \end{aligned}$$`
+
+      `$$Ans = f_{n,m}$$`
+
+      ```cpp
+      rep(i,1,n){
+          rep(j,1,m){
+              f[i][j] = max(f[i-1][j], f[i][j-1]);
+              if( a[i]==b[j] ) f[i][j] = max(f[i][j], f[i-1][j-1]+1);
+          }
+      }
+      printf("%d\n", f[n][m]);
+      ```
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ## LIS
+
+      `$$A_0 = -\inf,\quad A_{n+1} = \inf$$`
+
+      `$$\begin{aligned}
+      f_i &= \max_{j<i}f_j+1\qquad A_j<A_i
+      \end{aligned}$$`
+
+      `$$Ans = f_{n+1}$$`
+
+      ```cpp
+      a[0] = -1e9, a[n+1] = 1e9;
+      rep(i,1,n+1){
+          rep(j,0,i-1) if( a[j]<a[i] ){
+              f[i] = max(f[i], f[j]+1);
+          }
+      }
+      printf("%d\n", f[n+1]);
+      ```
+
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      <!-- .slide: style="font-size:25px" -->
+      ## 独立集、点覆盖
+
+      * 独立集（independent set)
+
+        图中每一条边至多有一个顶点在这个集合中，也就是说不会存在一条边包含的两个顶点都在这个集合中，即集合中不存在相邻的顶点。我们希望尽可能找到更多的这样的顶点。
+
+      * 点覆盖（vertex cover)
+
+        图中每一条边至少有一个顶点在这个集合中，也就是说用点去覆盖整个图的所有的边，当然，我们希望找到最少的点去覆盖所有的边。
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ## 最大权独立集、最小权点覆盖
+
+      种树，守卫
+
+      【样例】
+
+      把最大权独立集取相反数就是最小权点覆盖
+
+      ---
+
+      <div>
+        最大权独立集
+
+        `$$\begin{aligned}
+        f_{0,0/1} &= 0\\
+        f_{i,0} &= \max(f_{i-1,0}, f_{i-1,1})\\
+        f_{i,1} &= f_{i-1,0}+a_i
+        \end{aligned}$$`
+
+        `$$Ans = \max(f_{n,0}, f_{n,1})$$`
+      </div>
+      <!-- .element: style="float:left;width:50%" -->
+
+      <div>
+        最小权点覆盖
+
+        `$$\begin{aligned}
+        f_{0,0} &= 0\qquad f_{0,1} = \inf\\
+        f_{i,1} &= \min(f_{i-1,0}, f_{i-1,1})+a_i\\
+        f_{i,0} &= f_{i-1,1}
+        \end{aligned}$$`
+
+        `$$Ans = \min(f_{n,0}, f_{n,1})$$`
+      </div>
+      <!-- .element: style="float:left;width:50%" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ### PLUS
+
+      这个问题在写课件的后期发现也可以进一步改进。
+      <!-- .element: class="small" -->
+
+      以最大权独立集为例:
+
+      $f_{i,1} = f_{i-1,0}+a_i$，这个转移只有一个固定的转移。我们直接用代入法化简。
+
+      `$$\begin{aligned}
+      & f_{i,0} &&= \max(f_{i-1,0}, f_{i-1,1})\\
+      \Rightarrow\quad & f_{i,0} &&= \max(f_{i-1,0}, f_{i-2,0}+a_{i-1})\\
+      \Rightarrow\quad & f_{i} &&= \max(f_{i-1}, f_{i-2}+a_{i-1})
+      \end{aligned}$$`
+
+      化简之后的式子不再需要01那维了。
+
+      ```cpp
+      ```
+
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 背包问题
+
+      传统的背包讲法是背包⑨讲，适合对dp不熟悉的新手，本课件将忽略一些细节，直接从对dp**状态**和**转移**的辨析入手介绍背包问题。
+      <!-- .element: class="small" -->
+
+      ---
+
+      ### 01背包
+
+      给定$n$件物品，每件物品有体积$c_i$，价值$v_i$。背包的最大容量为$M$，问应该如何选择装入背包中的物品，使得装入背包中物品的总价值最大？
+
+      $$1\le N\le 1000,\ 1\le M\le 5000$$
+      $$1\le c_i\le M,\ 1\le v_i\le 10^9$$
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      状态定义f[i][j]表示，从前向后考虑到第i个物品，前i个物品中被选择物品的总体积是j。
+
+      其实，每个f[i][j]都可以看成原问题N=i, M=j的答案。
+
+      ```cpp
+      f[i][j] = max(f[i-1][j], f[i-1][j-c[i]]+v[i]);
+      ```
+
+      接下来是状态的解释:
+
+      * 虽然这个问题的物品顺序不重要，但是dp需要一个确定的顺序，所以状态里的前i个是必要的。当然我们可以贪心的先选性价比更高的物品，不过复杂度没有改进，因此原始顺序对解决问题是充分的。
+
+      * 关于体积j，这个是背包问题的一个抽象。我们在考虑子问题时，并不关心之前装了什么物品，只要知道总体积是多少，就能进行下一步物品放不放的决策，所以这个状态下物品可以抽象成体积。
+
+      ---
+
+      ### 完全背包
+
+      给定$n$种物品，每种物品有体积$c_i$，价值$v_i$，**每一种物品可以取无数个**。背包的最大容量为$M$，问应该如何选择装入背包中的物品，使得装入背包中物品的总价值最大？
+
+      $$1\le N\le 1000,\ 1\le M\le 5000$$
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ```cpp
+      f[i][j] = max(f[i-1][j], f[i][j-c[i]]+v[i]);
+      ```
+
+      详细讲一下转移。
+
+      很明显这里的方程相较于01背包方程，它可以从同一个$i$转移而来。这是因为每一种物品可以取多次，如果我们先取一次，我们发现只有剩余体积改变了，而物品i仍然可以取。所以从同一个$i$转移。
+
+      ---
+
+      <div>
+        01背包
+
+        `$$\begin{aligned}
+        f_{i,j} &= f_{i-1,j}\\
+        f_{i,j} &= f_{i-1,j-c_i}+v_i
+        \end{aligned}$$`
+
+        `$$Ans = \max_j f_{n,j}$$`
+
+        ```cpp
+        rep(i,1,n){
+            rep(j,0,c[i]-1) f[i][j] = f[i-1][j];
+            rep(j,c[i],m){
+                f[i][j] = max(f[i-1][j], f[i-1][j-c[i]]+v[i]);
+            }
+        }
+        ```
+      </div>
+      <!-- .element: style="float:left;width:50%" -->
+
+      <div>
+        完全背包
+
+        `$$\begin{aligned}
+        f_{i,j} &= f_{i-1,j}\\
+        f_{i,j} &= f_{i,j-c_i}+v_i
+        \end{aligned}$$`
+
+        `$$Ans = \max_j f_{n,j}$$`
+
+        ```cpp
+        rep(i,1,n){
+            rep(j,0,c[i]-1) f[i][j] = f[i-1][j];
+            rep(j,c[i],m){
+                f[i][j] = max(f[i-1][j], f[i][j-c[i]]+v[i]);
+            }
+        }
+        ```
+      </div>
+      <!-- .element: style="float:left;width:50%" -->
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 字符串匹配问题
+
+      有多少种长度为$n$的字符串$s$，满足$s$仅由`{A,B,C}`构成，且$s$中未出现过`"ABC"`
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      定义状态$f_{i,j}$，表示在第$i$位上匹配数为$j$的方案数。匹配数是当前字符串后缀和`"ABC"`有前几位相同。比如当前状态字符串后缀为`"A"`，匹配数为1
+
+      * 如果$i-1$的地方匹配数为0，填A之后匹配数为1，填B,C之后匹配数仍为0
+
+      * 如果$i-1$的地方匹配数为1，填B之后匹配数为2，填A,C之后匹配数为0
+
+      * 如果$i-1$的地方匹配数为2，填A,B之后匹配数为0，填C之后不满足条件
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      `$$\begin{aligned}
+      f_{0,0} &= 1\\
+      f_{i,0} &= f_{i-1,0}*2+f_{i-1,1}*2+f_{i-1,2}*2\\
+      f_{i,1} &= f_{i-1,0}\\
+      f_{i,2} &= f_{i-1,1}\\
+      \end{aligned}$$`
+
+      从dp方程我们也能发现，有一种不满足条件的情况没有"转移出口"，可以看出在dp下这一部分被筛掉了。至于$Ans$等于什么这个问题很显然。
+
+      这道题也可以dp"筛掉"的个数，也就是出现过`"ABC"`的字符串个数，答案是$3^n-Ans$。
+
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      <!-- .slide: style="font-size:25px" -->
+      ## 滚动数组 一种减小空间复杂度的策略
+
+      拿01背包来说，这是代码
+
+      ```cpp
+      rep(i,1,n){
+          rep(j,0,c[i]-1) f[i][j] = f[i-1][j];
+          rep(j,c[i],m) f[i][j] = max(f[i-1][j], f[i-1][j-c[i]]+v[i]);
+      }
+      ```
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      会发现每层转移只依赖上一层，上一层之前的数组再也用不到了。
+
+      所以我们可以按奇偶存入数组，把原来的二维数组`f[N][M]`变成`f[2][M]`
+
+      ```cpp
+      rep(i,1,n){
+          rep(j,0,c[i]-1) f[i&1][j] = f[(i&1)^1][j];
+          rep(j,c[i],m) f[i&1][j] = max(f[(i&1)^1][j], f[(i&1)^1][j-c[i]]+v[i]);
+      }
+      ```
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      更通用的改写方法是
+
+      ```cpp
+      rep(i,1,n){
+          bool I = i&1;
+          memset(f[I], 0, sizeof(int)*(m+1)); // 数组清空
+          rep(j,0,c[i]-1) f[I][j] = f[I^1][j];
+          rep(j,c[i],m) f[I][j] = max(f[I^1][j], f[I^1][j-c[i]]+v[i]);
+      }
+      ```
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      原理其实只是因为在dp过程中，我们可以舍弃中间的过程值，只使用需要的dp值就可以继续递推。
+
+      如果当前状态只需要最近的有限种状态的信息，我们就可以使用滚动数组。
+
+      比如$f_i\leftarrow f_{i-k}$，$k$的值比较小，就可以将$f_i$存入数组的$i\mod(k+1)$位置上。(可以用滚动数组实现一下上一道字符串的dp)
+
+      ```cpp
+      rep(j,1,k) f[i%(k+1)] += f[(i-j+k+1)%(k+1)];
+      ```
+
+      实际上滚动数组对于时间优化也有效果，因为连续访问内存更加连续，便于程序将数据加入Cache，减少很多数组寻址的常数。(甚至有时1s能跑3e8)
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      因为有`f[i][j] = f[i-1][j]`的初始转移式，背包有一种极精简的写法 (背包问题Only)
+
+      $$f_j = f_{j-c_i}+v_i$$
+
+      01背包
+
+      ```cpp
+      rep(i,1,n){
+          rev_rep(j,m,c[i]) f[j] = max(f[j], f[j-c[i]]+v[i]);
+      }
+      ```
+
+      注意枚举顺序
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      完全背包
+
+      ```cpp
+      rep(i,1,n){
+          rep(j,c[i],m) f[j] = max(f[j], f[j-c[i]]+v[i]);
+      }
+      ```
+
+  </script></section>
+</section>
+<section data-markdown><script type="text/template">
+    ## 「练习」简单dp问题
+
+    * P1115 最大子段和 - 洛谷 | 计算机科学教育新生态(https://www.luogu.com.cn/problem/P1115)
+
+    * LCIS
+
+    * [P5020 \[NOIP2018 提高组\] 货币系统](https://www.luogu.com.cn/problem/P5020)
+
+</script></section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 区间dp 「NOI1995」石子合并
+
+      在一个圆形操场的四周摆放$N$堆石子，现要将石子有次序地合并成一堆，规定每次只能选相邻的$a_i, a_{i+1}$两堆合并成新的一堆，并将新的一堆的石子数$a_i+a_{i+1}$，记为该次合并的得分。
+
+      试设计出一个算法,计算出将$N$堆石子合并成一堆的最小得分和最大得分。
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      (下面仅讨论求最大得分)
+
+      对于环形问题，我们可以把数组复制一遍，得到长度为$2n$的数组。
+
+      环的答案就是区间$[1,n],[2,n+1]...[n-1,2n-1]$的答案中最大的一个。
+
+      设区间和
+      <!-- .element: style="float:left;margin-left:200px" -->
+
+      `$$sum(l,r)=\sum_{i=l}^r a_i=sum(r)-sum(l-1)$$`
+
+      则可以写出dp方程
+      <!-- .element: style="float:left;margin-left:200px" -->
+
+      `$$f_{l,r} = \max_{l\le w<r}f_{l,w}+f_{w+1,r}+sum(l,r)$$`
+
+      复杂度为$O(n^3)$
+
+  </script></section>
+</section>
+<section>
+  <section data-markdown><script type="text/template">
+      <!-- .slide: style="font-size:25px" -->
+      ## 简单博弈游戏
+
+      * 博弈游戏
+
+        绝对聪明的两个人在一定约束条件下，利用已掌握的信息，做出使自身收益最大化的操作。
+
+      * 公平
+
+        每个人的操作是不是对等的。  
+        比如象棋就是不公平的，因为不能移动别人的棋子。
+
+      * 信息对等
+
+        每个人所掌握的信息是不是对等的。  
+        比如斗地主就是信息不对等的，因为你不知道别人手上的牌。
+
+      ---
+
+      ### 经典例子: 巴什博弈
+
+      题目：有$n$个石子，两个人轮流取，每次最多取$m$个，最少取$1$个，取完者获胜，问先手有没有必胜策略。
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      关于非组合博弈游戏的状态，我们用$f_i=1$表示局面$i$为必胜点，反之是必败点。于是
+
+      * 一步只能到达 必胜点 的都是 必败点
+
+      * 一步可以到达 必败点 的都是 必胜点
+
+      `$$f_i=\neg\bigwedge_{j=1}^m f_{i-j}$$`
+      <!-- .element: class="fragment" -->
+
+      初始状态是$f_0=0$
+      <!-- .element: class="fragment" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ```cpp
+      ```
+
+      题外话:作为一道大多数人都会的小学奥数题，有一个很流传很广的必胜策略：每次对方取$k$个，就取$m+1−k$个，第一次取$n\mod(m+1)$个
+      <!-- .element: class="fragment" -->
+
+      ---
+
+      ### 威佐夫博弈
+
+      题目：有两堆石子，两个人轮流去，每次可以从一堆中取若干个或从两堆中取相同的若干个，取完者获胜，问先手有没有必胜策略。
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      `$$\begin{aligned}
+      f_{i,j} &\leftarrow f_{i-k,j}\\
+      f_{i,j} &\leftarrow f_{i,j-k}\\
+      f_{i,j} &\leftarrow f_{i-k,j-k}
+      \end{aligned}$$`
+
+      <div id="wythoff"></div>
+
+      根据打出来的表，可以总结通项公式
+      <!-- .element: class="fragment" -->
+
+      通项公式：记 $\phi = \frac{1+\sqrt 5}{2}$，则 $a_i=\lfloor i\phi\rfloor,\quad b_i=\lfloor i\phi^2\rfloor$，$(a_i,b_i)$为必败点
+      <!-- .element: class="fragment" -->
+
+      前几项为$(0,0),(1,2),(3,5),(4,7),(6,10)...$
+      <!-- .element: class="fragment" -->
+
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 状态压缩dp
+
+      P3052 [USACO12MAR]Cows in a Skyscraper G
+
+      https://www.luogu.com.cn/problem/P3052
+
+      给出$n$个物品，有体积$w_i(w_i\le 10^9)$，现把其分成若干组，要求每组总体积$\sum w_i\le W$，问最小组数。$(n\le 18)$
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      如果用$S$表示已经选择的物品的集合，可以把集合状态压缩成一个二进制数，如果物品$i\in S$，那么在$S$的第$i$位置$1$。所以$S$的大小在$[0,2^n)$范围内，对于$n=18$，$2^{18}=262144$，大小是足够的。
+      <!-- .element: class="fragment" -->
+
+      答案数(组数)不会大于$18$，所以可以把答案数记为状态，$f_{i,j,S}$表示组数是第$i$组，现有总体积是$j$，已经选择的集合是$S$，这样的状态是否可行。
+      <!-- .element: class="fragment" -->
+
+      当然这道题不能这样做，因为体积太大了。我们发现对于$i$和$S$确定的所有状态，当前总体积$j$更小的一定更优，所以可以把$j$变成dp数组代表的值。
+      <!-- .element: class="fragment" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      现在重新定义状态$f_{i,S}$，表示组数是第$i$组，已经选择的集合是$S$，这样的状态的最小体积是多少。
+      【TODO:方程好像写错了】
+      <!-- .element: class="fragment" -->
+
+      <div>
+
+        `$$\begin{aligned}
+        f_{i,S\cup\{t\}} &\leftarrow \min_{t\notin S} f_{i,S}+w_i \quad &f_{i,S}+w_i\le W\\
+        f_{i+1,S\cup\{t\}} &\leftarrow \min_{t\notin S} f_{i,S}+w_i \quad &f_{i,S}+w_i>W
+        \end{aligned}$$`
+        
+        `$$Ans = [f_{i,U}\le W] \qquad U=\{1,2,...,n\}$$`
+      </div>
+      <!-- .element: class="fragment" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      回忆一下位运算
+      <!-- .element: class="fragment" -->
+
+      |||
+      |-|-|
+      |`$S\cup\{t\}$`|`S\|(1<<(t-1))`|
+      |$t\notin S$|`(S&(1<<(t-1)))==0`|
+      |$U$|`(1<<n)-1`|
+      <!-- .element: class="fragment" -->
+
+      $f$数组初值都设为$\inf$，就可以开始愉快地dp了。
+      <!-- .element: class="fragment" -->
+
+  </script></section>
+</section>
+<section data-markdown=""><script type="text/template">
+    <!-- .slide: style="font-size:25px" -->
+    ## 「总结」dp的状态与转移
+
+    转移上，
+    <!-- .element: style="float:left;margin-left:200px" -->
+    <!-- .element: class="fragment" -->
+
+    <div>
+
+      * 取max/min的状态转移是最优化dp。
+      
+      * 布尔运算的状态转移是可行性dp。
+      
+      * 加法乘法原理的状态转移是计数dp。
+    </div>
+    <!-- .element: class="fragment" -->
+    <!-- .element: style="clear:both"-->
+
+    转移上其他不同的分类还有概率dp，期望dp，本课件不会涉及。
+    <!-- .element: class="fragment" -->
+
+    状态上，
+    <!-- .element: style="float:left;margin-left:200px" -->
+    <!-- .element: class="fragment" -->
+
+    <div>
+
+      * 局面可以记为状态。
+      
+      * 集合可以记为状态，这种被称为状态压缩dp。
+      
+      * 甚至答案较小也可以把答案作为状态，使得最优化问题转变为可行性问题。  
+      这种和枚举所有答案一一判断或者二分答案的思想也有相似的地方。
+    </div>
+    <!-- .element: class="fragment" -->
+    <!-- .element: style="clear:both"-->
+
+</script></section>
+<section data-markdown=""><script type="text/template">
+    ## PRACTICE DP: Methods & Tricks
+
+    线性dp+dp技巧  
+    P1052 [NOIP2005 提高组] 过河 - 洛谷 | 计算机科学教育新生态
+    <https://www.luogu.com.cn/problem/P1052>  
+    题解:https://ac.nowcoder.com/acm/problem/blogs/16655
+
+    区间dp  
+    P2890 [USACO07OPEN]Cheapest Palindrome G - 洛谷 | 计算机科学教育新生态
+    https://www.luogu.com.cn/problem/P2890
+
+    状态定义
+    P3147 [USACO16OPEN]262144 P
+    https://www.luogu.com.cn/problem/P3147
+
+    NP-hard问题与状压dp  
+    简单环  
+    https://ac.nowcoder.com/acm/problem/16544
+</script></section>
+<section data-markdown=""><script type="text/template">
+    iframe dp live
+</script></section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 树形dp
+  
+      没有上司的舞会
+  
+      P1352 没有上司的舞会 最大权独立集问题
+  
+      P2016 战略游戏 最小权覆盖集问题
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      设$f_{u,0/1}$表示子树的最大独立集，1表示u被选择。
+
+      假定$1$为根，在dfs的过程中dp。
+
+      <div>
+        树上最大权独立集
+
+        `$$\begin{aligned}
+        f_{u,0} &= \sum_{(u,v)\in E} \max(f_{v,0}, f_{v,1})\\
+        f_{u,1} &= \sum_{(u,v)\in E} f_{v,0}+a_u
+        \end{aligned}$$`
+
+        `$$Ans = \max(f_{1,0}, f_{1,1})$$`
+      </div>
+      <!-- .element: style="float:left;width:50%" -->
+
+      <div>
+        最小权点覆盖
+
+        `$$\begin{aligned}
+        f_{u,1} &= \sum_{(u,v)\in E} \min(f_{v,0}, f_{v,1})+a_u\\
+        f_{u,0} &= \sum_{(u,v)\in E} f_{v,1}
+        \end{aligned}$$`
+
+        `$$Ans = \min(f_{1,0}, f_{1,1})$$`
+      </div>
+      <!-- .element: style="float:left;width:50%" -->
+  
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## DAG上dp、拓扑排序
+  
+      DAG上的dp，在dfs或者拓扑排序的过程中维护dp数组。
+  
+      CF919D Substring - 洛谷 | 计算机科学教育新生态
+      https://www.luogu.com.cn/problem/CF919D
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      思路: 先考虑有环的情况，如果有环，环上字母可以被经过无数次，答案无穷大，输出$-1$就行了。
+      <!-- .element: class="fragment" -->
+
+      没有环的图是有向无环图(DAG)，于是可以用dp来解决。
+      <!-- .element: class="fragment" -->
+
+      对每个字母进行dp，总共做26遍，设当前字母是$C$。
+      <!-- .element: class="fragment" -->
+
+      `$$\begin{aligned}
+      f_u &= \max_{(u,v)\in E} f_v+[s\small{[u]}=C]\\
+      \end{aligned}$$`
+      <!-- .element: class="fragment" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      最后关于这题的卡常，有一些有意思的情况。
+      <!-- .element: class="fragment" -->
+
+      首先是dfs通常比拓扑跑的快，因为拓扑通常用到STL的queue。
+      <!-- .element: class="fragment" -->
+
+      <div>
+
+        * 如果是题解的方法，判环和26遍dp，总共27遍dfs，常数较大。
+        <!-- .element: class="fragment" -->
+        
+        * 判环同时for循环dp，1遍dfs，常数小，但空间复杂度较大$(26n)$。
+        <!-- .element: class="fragment" -->
+      </div>
+      <!-- .element: class="fragment" -->
+
+      不过最快的却是拓扑排序做法
+      <!-- .element: class="fragment" -->
+
+      * 拓扑排序确定顺序后线性dp，不需要dfs，常数很小，空间复杂度也是$26n$，比dfs难写一点。
+      <!-- .element: class="fragment" -->
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 二维dp
+
+      一类最大子矩形问题
+
+      ---
+
+      P1387 最大正方形 - 洛谷 | 计算机科学教育新生态
+      https://www.luogu.com.cn/problem/P1387
+
+      只需判断f[i][j]的左方、上方、左上方的最小值，再+1即可。。。
+      
+      f[i][j]=min(min(f[i-1][j],f[i][j-1]),f[i-1][j-1])+1
+
+      复杂度$O(n^2)$
+
+      P1681 最大正方形II
+      https://www.luogu.com.cn/problem/P1681
+
+      ---
+
+      P4147 玉蟾宫
+      https://www.luogu.com.cn/problem/P4147
+
+      P1169 [ZJOI2007]棋盘制作
+      https://www.luogu.com.cn/problem/P1169
+
+      悬线法
+
+      关于单调栈的做法，因为还没学就先不讲，不过也挺简单的。
+
+      ---
+
+      P1719 最大加权矩形
+      https://www.luogu.com.cn/problem/P1719
+      P7741 [AHOI2007] 石块地板
+      https://www.luogu.com.cn/problem/P7741
+
+      二维前缀和
+
+      枚举l,r，变成一维最大子段和
+
+      复杂度$O(n^2m)$
+
+      ---
+
+      P2331 [SCOI2005]最大子矩阵
+      https://www.luogu.com.cn/problem/P2331
+
+      分情况讨论
+
+      最大子段和或者多一维的dp
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 数位dp
+  
+      数字计数
+
+      https://www.luogu.com.cn/problem/P2602
+
+      TODO: https://github.com/ludwick/reveal.js-mermaid-plugin
+
+      ```mermaid
+      flowchart TD
+        d1[233]
+        t[*表示0-9任选<br/>?表示有上限限制]
+        d21[**]
+        d22[1**]
+        d23[2??]
+        d31[20*]
+        d32[21*]
+        d33[22*]
+        d34[23?]
+        d41[230]
+        d42[231]
+        d43[232]
+        d44[233]
+        d1  --> d21
+        d1  --> d22
+        d1  -.-> d23
+        d23 --> d31
+        d23 --> d32
+        d23 --> d33
+        d23 -.-> d34
+        d34 --> d41
+        d34 --> d42
+        d34 --> d43
+        d34 --> d44
+        class d1,d21,d22,d23,d31,d32,d33,d34,d41,d42,d43,d44 d;
+        classDef d stroke:none,fill:aliceblue;
+        style t stroke:none,fill:inherit,color:white;
+      ```
+
+      ---
+
+      build
+
+      ```cpp
+      enum{N=21};
+      int d[N];
+      ll pow10[N], tmp[N];
+      int build(ll x0){
+          int n = 1;
+          ll x = x0;
+          d[1] = x%10; x/=10;
+          for(; x; x/=10) d[++n] = x%10;
+          pow10[0] = 1, tmp[0] = 0;
+          rep(i,1,n) pow10[i] = pow10[i-1]*10, tmp[i] = x0%pow10[i]+1;
+          return n;
+      }
+      ll cnt(int cur, bool lim){
+          return lim ? tmp[cur] : pow10[cur];
+      }
+      ```
+
+      ---
+  
+      记忆化搜索
+
+      ```cpp
+      int f[N];
+      bool vis[N];
+      int num;
+      ll dfs(int cur, bool lim, bool zero){
+          if( cur==1 ) return lim ? d[1]>=num : 1;
+          if( lim==0 && zero==0 ){
+              if( vis[cur] ) return f[cur];
+              vis[cur] = 1;
+          }
+          ll ans = 0;
+          int ed = lim ? d[cur]:9;
+          rep(i,0,ed){
+              ans += dfs(cur-1, lim&&i==ed, zero&&i==0) + (!(zero&&i==0) && i==num ? cnt(cur-1, lim&&i==ed):0 );
+          }
+          if( lim==0 && zero==0 ) f[cur] = ans;
+          return ans;
+      }
+      ```
+
+      ---
+
+      主函数
+
+      ```cpp
+      ll ans[N];
+      int main(){
+          ll l,r;
+          scanf("%lld%lld", &l, &r);
+          int n = build(l-1);
+          rep(i,0,9){
+              num = i;
+              ans[i] = dfs(n,1,1);
+          }
+          memset(vis, 0, sizeof(vis));
+          n = build(r);
+          rep(i,0,9){
+              num = i;
+              ans[i] = dfs(n,1,1)-ans[i];
+          }
+          rep(i,0,9) printf("%lld ", ans[i]); puts("");
+          return 0;
+      }
+      ```
+
+      ---
+
+      单次复杂度为$O(数字位数 * 进制 * 状态常数)$
+
+      在这道题中，单次$\log_{10}(10^{12}) * 10 * 2^2=480$，总共进行$20$次，计算次数也才$9600$的级别。
+  
+  </script></section>
+</section>
+<section>
+  <section data-markdown><script type="text/template">
+      ## 「总结」dp可行性的讨论
+
+      <div>
+        能用动态规划解决的最优化问题，需要满足三个条件：
+        
+        最优子结构，无后效性和子问题重叠。
+      </div>
+      <!-- .element: class="fragment" -->
+
+      （计数dp本质是递推/递归，满足子结构，无后效性(不能算重)和子问题重叠）
+      <!-- .element: class="small fragment" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ### 最优子结构
+
+      注意要确保我们考察了最优解中用到的所有子问题。
+      <!-- .element: class="fragment" -->
+
+      <div>
+
+        * dp需要用递归的方法思考问题。
+        在每次决策中，假定你已经知道哪种选择才会得到最优解。
+        
+        * dp需要一个明确的状态。
+        给定可获得的最优解的选择后，确定这次选择会产生哪些子问题，考虑将其抽象为子问题状态。
+      </div>
+      <!-- .element: class="fragment" -->
+
+      <div>
+
+        * dp正确性的证明：作为构成原问题最优解的组成部分，每个子问题的解就是它本身的最优解。
+        
+        证明方法是反证法，考虑加入某个子问题的解不是其自身的最优解，那么就可以从原问题的解中用该子问题的最优解替换掉当前的非最优解，从而得到原问题的一个更优的解，从而与原问题最优解的假设矛盾。实际上和贪心证明方法类似。
+        <!-- .element: class="small" -->
+      </div>
+      <!-- .element: class="fragment" -->
+
+      有时最优子结构问题也能使用贪心解决，如最小树上k距离覆盖问题。luogu将军令[]()
+      <!-- .element: class="fragment" -->
+
+      在子问题图中，每个顶点对应一个子问题，而需要考察的选择对应关联至子问题顶点的边。
+      <!-- .element: class="fragment" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ### 无后效性
+
+      当前决策不会受到后续决策的影响。
+      <!-- .element: class="fragment" -->
+
+      举例来说，在网格里上下左右移动但不能走重复的点，有后效性，因为选择之后有可能再次经过之前经过的点，  
+      而如果改为只能向右向下移动，无后效性，因为之前经过的点在子问题里不可能经过。
+      <!-- .element: class="fragment" -->
+
+      01背包无后效性，因为当前选择物品会完全转化成体积，和后面的物品选和不选没有关系，而用01背包算法求解有依赖的背包有后效性。
+      <!-- .element: class="fragment" -->
+
+      在子问题图上，无后效性可能意味着转移图是DAG(有向无环图)。
+      <!-- .element: class="fragment" -->
+
+      在某些复杂问题里面，比如数位dp，有时会发现可以构造相邻状态，相邻的状态只有有限的联系，所以如果把联系抽象成转移，对于不相邻的两个状态就可以看作是无后效性，这个套路经常出现在区域赛中(通常又难想又容易写错，悔恨！)。
+      <!-- .element: class="fragment small" -->
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+
+      ### 子问题重叠
+
+      如果有大量的重叠子问题，我们可以用空间将这些子问题的解存储下来，避免重复求解相同的子问题，从而提升效率。
+      <!-- .element: class="fragment" -->
+
+      如果不存在子问题重叠，做法通常不是dp而是搜索算法。
+      <!-- .element: class="fragment" -->
+  </script></section>
+</section>
+<section data-markdown=""><script type="text/template">
+    ## 「練習」dpの可能性
+
+    线性dp，位运算
+    P4310 绝世好题 - 洛谷 | 计算机科学教育新生态
+    https://www.luogu.com.cn/problem/P4310
+
+    负体积背包
+    P1282 多米诺骨牌 - 洛谷 | 计算机科学教育新生态
+    https://www.luogu.com.cn/problem/P1282
+
+    树上背包
+    P2014 [CTSC1997] 选课
+    https://www.luogu.com.cn/problem/P2014
+    (数据加强版)
+    https://www.luogu.com.cn/problem/U53204
+
+    数位dp
+    P2657 [SCOI2009] windy 数 - 洛谷 | 计算机科学教育新生态
+    https://www.luogu.com.cn/problem/P2657
+</script></section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 多重背包
+  
+      给定$n$种物品，每种物品有体积$c_i$，价值$v_i$，**每一种物品有$k_i$个**。背包的最大容量为$M$，问应该如何选择装入背包中的物品，使得装入背包中物品的总价值最大？
+  
+      樱花
+  
+      P1833 樱花 - 洛谷 | 计算机科学教育新生态
+      https://www.luogu.com.cn/problem/P1833
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+  
+      首先有暴力做法是直接把$k_i$个物品一个一个算，变成01背包，复杂度$O(nmK)$
+      <!-- .element: class="fragment" -->
+  
+      但这样的状态有很多冗余，比如如果我们取2个该物品，我们明显有$\binom{k}{2}$种取法，转移浪费严重。
+      <!-- .element: class="fragment" -->
+  
+      把$k_i$的所有二进制位抽象成物品，则可以表示全部`$0\sim k_i$`的体积
+      <!-- .element: class="fragment" -->
+  
+      复杂度$O(nm\log K)$
+      <!-- .element: class="fragment" -->
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      <!-- .slide: style="font-size:25px" -->
+      ## 排列数递推 + 教你怎么使用oeis
+  
+      P6162 [Cnoi2020]四角链 - 洛谷 | 计算机科学教育新生态
+      https://www.luogu.com.cn/problem/P6162
+  
+      四角链可以抽象为 $1\times (n - 1)$ 网格，每个格子被分别编号为 $1$, $2$, .... , $n-1$。
+  
+      每个格子可以有两种选择 :
+      - 不填数
+      - 填入一个小于或等于自己编号的正整数
+  
+      当一种填数方案 **不存在两个格子填的数相同** 时，Cirno 称之为合法方案。
+  
+      Cirno 想知道有且仅有 $k$ 个格子填入了数字的合法方案数对 $998244353$ 取模后的结果。
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+  
+      `$$f_{n,k}=f_{n-1,k}+(n-k+1)f_{n-1,k-1}$$`
+  
+      ```
+      ```
+
+      ---
+  
+      iframe
+  
+      https://oeis.org/
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## bitset优化可行性01背包
+
+      热知识:长度为$n$的bool数组大小是$4n$bit的。
+      <!-- .element: class="small" -->
+
+      货船
+      https://ac.nowcoder.com/acm/problem/236172
+ 
+      有$n$个货物，需要装入货船，第$i$个货物的重量是$w_i$。货船的最大载重量是$A$，请问在不超过货船最大载重量的前提下，一次最多能运送多少重量的货物。
+  
+      $1\le n,A\le 10^5$
+
+      $1\le w_i\le 10^5$
+   
+      ---
+      <!-- .slide: style="font-size:25px" -->
+  
+      https://oi-wiki.org/lang/csl/bitset/
+  
+      复杂度是 ~~$\color{grey}O(\frac{还算可以}{跑得过})$~~ $O(\frac{nm}{w})$
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      <!-- .slide: style="font-size:25px" -->
+      ## 状压dp 之 子集dp
+  
+      P5911 [POI2004]PRZ - 洛谷 | 计算机科学教育新生态
+      https://www.luogu.com.cn/problem/P5911
+  
+      ## 题目背景
+      
+      一只队伍在爬山时碰到了雪崩，他们在逃跑时遇到了一座桥，他们要尽快的过桥。
+      
+      ## 题目描述
+      
+      桥已经很旧了，所以它不能承受太重的东西。任何时候队伍在桥上的人都不能超过一定的限制。所以这只队伍过桥时只能分批过，当一组全部过去时，下一组才能接着过。队伍里每个人过桥都需要特定的时间，当一批队员过桥时时间应该算走得最慢的那一个，每个人也有特定的重量，我们想知道如何分批过桥能使总时间最少。
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+      
+      ## 输入格式
+      
+      第一行两个数:  $W$ 表示桥能承受的最大重量和 $n$ 表示队员总数。
+      
+      接下来 $n$ 行：每行两个数: $t$ 表示该队员过桥所需时间和 $w$ 表示该队员的重量。
+      
+      ## 输出格式
+      
+      输出一个数表示最少的过桥时间。
+      
+      <div>
+
+        ### 输入 #1
+        
+        ```
+        100 3
+        24 60
+        10 40
+        18 50
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 200px" -->
+      
+      <div>
+
+        ### 输出 #1
+        
+        ```
+        42
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 200px" -->
+      
+      $100\le W \le400$ ，$1\le n\le 16$，$1\le t\le50$，$10\le w\le100$。
+      <!-- .element: style="clear:both"-->
+  
+      ---
+      <!-- .slide: style="font-size:25px" -->
+  
+      `$$\begin{aligned}
+      f_S = f_{S\setminus T}+\max_{i\in T}t_i
+      \end{aligned}$$`
+  
+      ```
+      rep(S,1,U){
+          f[S] = 1e9;
+          for(int T=S; T; --T&=S) if( sum_w[T]<=W ){
+              f[S] = min(f[S], f[S^T]+mx_t[T]);
+          }
+      }
+      ```
+  
+      关于子集dp的复杂度证明
+  
+      $$\sum_{S}2^{|S|} = \sum_{k=0}^n\binom{n}{k}2^k = (2+1)^n = 3^n$$
+  
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      <!-- .slide: style="font-size:25px" -->
+      ## LIS的优化
+  
+      二分，维护最优数列。
+  
+      当 $n$ 的范围扩大到 $n \leq 10^5$ 时，第一种做法就不够快了，下面给出了一个 $O(n \log n)$ 的做法。
+      
+      ```cpp
+      for (int i = 0; i < n; ++i) scanf("%d", a + i);
+      memset(dp, 0x1f, sizeof dp);
+      mx = dp[0];
+      for (int i = 0; i < n; ++i) {
+          *upper_bound(dp, dp + n, a[i]) = a[i];
+      }
+      ans = 0;
+      while (dp[ans] != mx) ++ans;
+      ```
+      
+      首先，定义 $a_1 \dots a_n$ 为原始序列，$d$ 为当前的不下降子序列，$len$ 为子序列的长度，那么 $d_{len}$ 就是长度为 $len$ 的不下降子序列末尾元素。
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+      
+      初始化：$d_1=a_1,len=1$。
+      
+      现在我们已知最长的不下降子序列长度为 1，那么我们让 $i$ 从 2 到 $n$ 循环，依次求出前 $i$ 个元素的最长不下降子序列的长度，循环的时候我们只需要维护好 $d$ 这个数组还有 $len$ 就可以了。**关键在于如何维护。**
+      
+      考虑进来一个元素 $a_i$：
+      
+      1. 元素大于等于 $d_{len}$，直接将该元素插入到 $d$ 序列的末尾。
+      2. 元素小于 $d_{len}$，找到 **第一个** 大于它的元素，插入进去，丢弃在它之后的全部元素。
+  
+      复杂度$O(n\log n)$
+
+      ---
+      <!-- .slide: style="font-size:25px" -->
+  
+      ### 排列LCS转LIS
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      <!-- .slide: style="font-size:25px" -->
+      ## 乘法转整除
+  
+      P5307 [COCI2018-2019#6] Mobitel - 洛谷 | 计算机科学教育新生态
+      https://www.luogu.com.cn/problem/P5307
+  
+      他画了一个$r$行$s$列的矩阵，每个格子里都有一个正整数。
+      他想知道，如果从左上角走到右下角，且每次只能向右或向下走到相邻格子，那么使得路径上所有数的乘积不小于$n$的路径有多少条？
+  
+      由于答案可能很大，所以请输出答案对$10^9+7$取模的结果。
+  
+      $1\le r,s \le 300$
+      $1\le n \le 10^6$
+      $a_{i,j}\le 10^6$
+  
+      ---
+      <!-- .slide: style="font-size:25px" -->
+  
+      设 $f_{i,j,k}$ 表示当前在 $(i,j)$，乘积为 $k$ 的路径条数。
+  
+      dp方程显然。
+  
+      发现第三维很多数字根本乘不出来。考虑逆着做dp，设$k$是$n$除以路径上所有数字的乘积的得数，$k$等于$0$则为非法状态。
+  
+      可以证明，$\lfloor\frac n i\rfloor$ 的不同取值数量不大于 $2\sqrt n$。若$i\le\sqrt n$，$\lfloor\frac n i\rfloor$ 最多有 $\sqrt n$ 种取值。若 $i>\sqrt n$，显然 $\lfloor\frac n i\rfloor \le \sqrt n$，最多有 $\sqrt n$ 种取值。综上，$\lfloor\frac n i\rfloor$ 最多有 $2\sqrt n$ 种取值。
+  
+      复杂度$O(nm\sqrt A)$
+  
+      具体实现需要一个id函数。
+  </script></section>
+</section>
+<section data-markdown=""><script type="text/template">
+    <!-- .slide: style="font-size:25px" -->
+    ## 「总结」dp与复杂度
+
+    粗略地说，复杂度等于状态数乘每个状态转移数。
+    <!-- .element: class="fragment" -->
+
+    状态数的优化在于精简状态，常用的方法是: 降维，例子是状压USACO那题，改变状态定义，例子乘法转整除。
+    <!-- .element: class="fragment" -->
+
+    还有[状态设计优化 - OI Wiki](https://oi-wiki.org/dp/opt/state/)里面的例子也是挺有趣的
+    <!-- .element: class="fragment" -->
+
+    转移数优化需要你把转移方程抽象为一个查询问题，这样就可以借助数据结构等工具优化。例子是多重背包、LIS、线性dp优化。
+    <!-- .element: class="fragment" -->
+
+    因为dp讲课时间被放在数据结构之前，所以本课件对此介绍甚少。可以自学单调队列和单调栈，掌握更多dp问题。
+    <!-- .element: class="fragment small" -->
+
+    第三种优化，数学推导，是对dp的降维打击。dp的难处很多是数学。
+    <!-- .element: class="fragment" -->
+</script></section>
+<section data-markdown><script type="text/template">
+    ## 「练习」dp训练之路
+
+    组合数学和树形dp
+    P3914 染色计数 - 洛谷 | 计算机科学教育新生态
+    https://www.luogu.com.cn/problem/P3914
+
+    记忆化搜索与整除分块
+    P4808 [CCC2018] 平衡树
+    https://www.luogu.com.cn/problem/P4808
+
+    复杂dp
+    P3672 小清新签到题 - 洛谷 | 计算机科学教育新生态
+    https://www.luogu.com.cn/problem/P3672
+
+    状压dp与图计数
+    abc213G
+</script></section>
+<section>
+  <h2 class="r-fit-text">Thanks</h2>
+</section>
+<section data-markdown><script type="text/template">
+    <!-- .slide: style="font-size:25px" -->
+    # Reference
+
+    OIwiki动态规划
+
+    2021课件背包问题-TanJI
+</script></section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script src="plugin/svg/svg.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+              width: 1380,
+              height: 700,
+              hash: true,
+
+              // Learn about plugins: https://revealjs.com/plugins/
+              plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX ]
+            });
+    </script>
+    <script src="js/z.js"></script>
+  </body>
+</html>
+<!-- vim: set et ts=6 ft=markdown: -->
