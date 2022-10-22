@@ -38,14 +38,12 @@
   max-width:900px;
 }
 .reveal .katex{
-  margin:0.2em;
-}
-.reveal p>code{
-  margin:0.2em;
+  margin: 0 0.2em;
 }
 #triangle{
-  height: 400px;
-  width: 350px;
+  background-color: black;
+  height: 500px;
+  width: 500px;
   position: absolute;
   top: 150px;
   left: 0;
@@ -67,7 +65,7 @@
 
     > DP就是Dalao Power的缩写。--jz集训
 
-    受命以来，苦心俯卷数月，作此篇章，意在不辱算法之魂。不求尽其详，助君略动规大观，解动规之惑也。
+    受命以来，伏案数月，想法屡有不通，寻题几经绝编，终作此篇章，意在报以算法之魂。不求尽其详，助君略动规大观，解动规之惑也。
 
     课件题目取自luogu，牛客，codeforces和atcoder。请同学提前注册账号。
     <!-- .element: class="small" -->
@@ -227,16 +225,20 @@
       <!-- .slide: style="font-size:25px" -->
 
       ![汉诺塔.png](public/汉诺塔.png)
-      <!-- .element: class="fragment" style="height:300px;float:left" -->
+      <!-- .element: class="fragment" style="width:650px;float:left" -->
 
-      可以递归地去想最小步数。
-      <!-- .element: class="fragment" -->
+      <div>
 
-      设$n$个圆盘从A放到C的最小步数是$f_n$。
-      <!-- .element: class="fragment" -->
-
-      在从A上拿走最大的圆盘$n$之前，必须要先将$n-1$拿走，放在另一个位置B，才能够把圆盘$n$移动到C。
-      <!-- .element: class="fragment" -->
+        可以递归地去想最小步数。
+        <!-- .element: class="fragment" -->
+        
+        设$n$个圆盘从A放到C的最小步数是$f_n$。
+        <!-- .element: class="fragment" -->
+        
+        在从A上拿走最大的圆盘$n$之前，必须要先将$n-1$拿走，放在另一个位置B，才能够把圆盘$n$移动到C。
+        <!-- .element: class="fragment" -->
+      </div>
+      <!-- .element: style="width:700px;float:right;padding-top:100px" -->
 
       <div>
 
@@ -299,55 +301,68 @@
     </div>
     <!-- .element: class="fragment" -->
 </script></section>
-<section data-markdown="" data-state="triangle"><script type="text/template">
-    ## 数字三角形 [IOI1994] The_Triangle 
+<section>
+  <section data-markdown="" data-state="triangle"><script type="text/template">
+      ## 数字三角形 [IOI1994] The_Triangle 
 
-    状态$f_{i,j}$表示当前在第$i$行第$j$列的位置，$(i,j)$走向两个位置，$(i+1,j)$和$(i+1,j+1)$，递归到最后一层答案就只有一个数字了。我们只要取两个位置的更大的值加上这个位置原来的值，就是$f_{i,j}$的答案。
+      https://www.luogu.com.cn/problem/P1216
 
-    `$$\begin{aligned}
-    f_{i,j} = \max\{f_{i+1,j}, f_{i+1,j+1}\}+a_{i,j}
-    \end{aligned}$$`
+      ---
+  
+      状态$f_{i,j}$表示当前在第$i$行第$j$列的位置，$(i,j)$走向两个位置，$(i+1,j)$和$(i+1,j+1)$，递归到最后一层答案就只有一个数字了。我们只要取两个位置的更大的值加上这个位置原来的值，就是$f_{i,j}$的答案。
 
-    `$$Ans = f_{1,1}$$`
+      由上面的讨论可以明白，在这道题中，位置$(i,j)$是**状态**，向下走向两个位置是**状态的转移**，取两个位置的更大的值加上这个位置原来的值就是在描述**状态转移方程**。
+  
+      `$$\begin{aligned}
+      f_{i,j} = \max\{f_{i+1,j}, f_{i+1,j+1}\}+a_{i,j}
+      \end{aligned}$$`
+  
+      `$$Ans = f_{1,1}$$`
+  
+      发现递归只会在**回溯**的时候得到新答案，如果倒着枚举行数，就不需要函数递归了。
+  
+      ```
+      ```
+  
+      ---
+  
+      <div id="triangle"></div>
+      <textarea id="triangle-input" cols="25" rows="5">3
+      5
+      2 1
+      3 4 6</textarea>
+      <button onclick="drawTriangle($('#triangle-input')[0].value)">draw</button>
+      <button onclick="solveTriangle($('#triangle-input')[0].value)">solve</button>
 
-    发现递归只会在**回溯**的时候得到新答案，如果倒着枚举行数，就不需要函数递归了。
-
-    ```
-    ```
-
-    ---
-
-    实际上从下向上走也可以得到结果，正确性是显然的。但是注意在每一行的边界位置上，只有一个方向可以转移。我们可以特判，也可以把无法转移的位置赋值成$-\inf$。
-
-    `$$\begin{aligned}
-    f_{i,j} = \max\{f_{i-1,j-1}, f_{i-1,j}\}+a_{i,j}
-    \end{aligned}$$`
-
-    `$$Ans = \max_i f_{n,i}$$`
-
-    <div id="triangle"></div>
-    <textarea id="triangle-input" cols="25" rows="5">3
-    5
-    2 1
-    3 4 6</textarea>
-    <button onclick="">commit</button>
-
-    暴力搜索复杂度是$2^n$，而dp做法复杂度只有$n^2$，可以看出，动态规划能把复杂度从**指数级**优化到**多项式级**。
-</script></section>
-<section data-markdown=""><script type="text/template">
-    ## 滑雪
-
-    https://www.luogu.com.cn/problem/P1434
-    同样可以递归考虑，走过的序列是单调下降的，所以可以递归求解，如果走到了一个*底谷*，在此处的答案就是$0$。于是可以用**记忆化搜索**解决该问题。
-
-    `$$\begin{aligned}
-    f_{i,j} = \max_{a_{i',j'}<a_{i,j}, |i'-i|+|j'-j|\le 1}\{f_{i',j'}\}+1
-    \end{aligned}$$`
-
-    `$$Ans = \max_{i,j} f_{i,j}$$`
-
-    在这个例子中我们每个位置只有被第一次访问时得到答案，在之后的访问只会立刻返回结果。所以复杂度是$O(nm)$。原理同样是子问题的重复利用。
-</script></section>
+      ---
+  
+      实际上从下向上走也可以得到结果，正确性是显然的。但是注意在每一行的边界位置上，只有一个方向可以转移。我们可以特判，也可以把无法转移的位置赋值成$-\inf$。
+  
+      `$$\begin{aligned}
+      f_{i,j} = \max\{f_{i-1,j-1}, f_{i-1,j}\}+a_{i,j}
+      \end{aligned}$$`
+  
+      `$$Ans = \max_i f_{n,i}$$`
+  
+      暴力搜索复杂度是$2^n$，而dp做法复杂度只有$n^2$，可以看出，动态规划能把复杂度从**指数级**优化到**多项式级**。
+  </script></section>
+</section>
+<section>
+  <section data-markdown=""><script type="text/template">
+      ## 滑雪
+  
+      https://www.luogu.com.cn/problem/P1434
+      同样可以递归考虑，走过的序列是单调下降的，所以可以递归求解，如果走到了一个*底谷*，在此处的答案就是$0$。于是可以用**记忆化搜索**解决该问题。
+  
+      `$$\begin{aligned}
+      f_{i,j} = \max_{a_{i',j'}<a_{i,j}, |i'-i|+|j'-j|\le 1}\{f_{i',j'}\}+1
+      \end{aligned}$$`
+  
+      `$$Ans = \max_{i,j} f_{i,j}$$`
+  
+      在这个例子中我们每个位置只有被第一次访问时得到答案，在之后的访问只会立刻返回结果。所以复杂度是$O(nm)$。原理同样是子问题的重复利用。
+  </script></section>
+</section>
 <section>
   <section data-markdown=""><script type="text/template">
       <!-- .slide: style="font-size:25px" -->
@@ -944,6 +959,7 @@
     NP-hard问题与状压dp  
     简单环  
     https://ac.nowcoder.com/acm/problem/16544
+    or CF11D
 </script></section>
 <section data-markdown=""><script type="text/template">
     iframe dp live
@@ -1106,8 +1122,6 @@
 
       https://www.luogu.com.cn/problem/P2602
 
-      TODO: https://github.com/ludwick/reveal.js-mermaid-plugin
-
       ```mermaid
       flowchart TD
         d1[233]
@@ -1212,7 +1226,7 @@
 
       ---
 
-      单次复杂度为$O(数字位数 * 进制 * 状态常数)$
+      单次复杂度为$O(\text{数字位数} * \text{进制} * \text{状态常数})$
 
       在这道题中，单次$\log_{10}(10^{12}) * 10 * 2^2=480$，总共进行$20$次，计算次数也才$9600$的级别。
   
@@ -1615,6 +1629,7 @@
     <script src="plugin/highlight/highlight.js"></script>
     <script src="plugin/math/math.js"></script>
     <script src="plugin/svg/svg.js"></script>
+    <script src="plugin/mermaid/mermaid.min.js" type="application/javascript"></script>
     <script>
       // More info about initialization & config:
       // - https://revealjs.com/initialization/
@@ -1629,6 +1644,7 @@
             });
     </script>
     <script src="z.js"></script>
+    <script src="dp.js"></script>
   </body>
 </html>
 <!-- vim: set et ts=6 ft=markdown: -->
