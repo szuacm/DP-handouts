@@ -24,6 +24,7 @@ EM_PORT_API(int*) triangle(const char*input){
 	ssin = stringstream(input);
 	int n = ci();
 	rep(i,1,n) rep(j,1,i) a[i][j] = ci();
+	rep(j,1,n+1) f[n+1][j] = 0;
 	rev_rep(i,n,1){
 		rep(j,1,i){
 			f[i][j] = max(f[i+1][j], f[i+1][j+1]) + a[i][j];
@@ -72,6 +73,7 @@ EM_PORT_API(int*) ski(const char*input){
 	_n = n;
 	_m = m;
 	rep(i,1,n) rep(j,1,m) a[i][j] = ci();
+	rep(i,1,n) rep(j,1,m) vis[i][j] = 0;
 	rep(i,1,n) rep(j,1,m) from[i][j] = -1;
 	rep(i,1,n) rep(j,1,m) f[i][j] = 1;
 	rep(i,1,n) rep(j,1,m) dfs(i,j);
