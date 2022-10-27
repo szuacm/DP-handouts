@@ -40,6 +40,12 @@
 .reveal .katex{
   margin: 0 0.2em;
 }
+.reveal .mermaid{
+  width:fit-content;
+}
+.reveal .mermaid > svg{
+	width:450px;
+}
 #triangle, #ski{
   background-color: black;
   height: 500px;
@@ -61,7 +67,7 @@
 <section data-markdown><script type="text/template">
     ## 引言
 
-    > 成也DP，败也DP。
+    > 成也DP，败也DP。--经典退役感言
 
     > DP就是Dalao Power的缩写。--jz集训
 
@@ -112,8 +118,7 @@
 
       ### 关于时间空间复杂度
 
-      时间复杂度是衡量程序做基本运算的次数与数据大小的粗略关系。
-      (TODO:语病？)
+      时间复杂度是用来衡量程序做基本运算的次数与数据大小的粗略关系。
       <!-- .element: class="fragment" -->
 
       <div>
@@ -333,39 +338,52 @@ rep(i,1,n){
       
       单独的一行,包含那个可能得到的最大的和。
       
-      ### 输入 #1
+      <div>
+
+        ### 输入 #1
+        
+        ```txt
+        5
+        7
+        3 8
+        8 1 0
+        2 7 4 4
+        4 5 2 6 5
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
-      ```
-      5
-      7
-      3 8
-      8 1 0
-      2 7 4 4
-      4 5 2 6 5
-      ```
-      
-      ### 输出 #1
-      
-      ```
-      30
-      ```
+      <div>
+
+        ### 输出 #1
+        
+        ```txt
+        30
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
       $1\le n \le 1000$，所有数字在 $[0,100]$ 范围内。
+      <!-- .element: style="clear:both"-->
       
       ---
       <!-- .slide: style="font-size:25px" -->
   
-      状态$f_{i,j}$表示当前在第$i$行第$j$列的位置，$(i,j)$走向两个位置，$(i+1,j)$和$(i+1,j+1)$，递归到最后一层答案就只有一个数字了。我们只要取两个位置的更大的值加上这个位置原来的值，就是$f_{i,j}$的答案。TODO:修饰
+      状态$f_{i,j}$表示当前在第$i$行第$j$列的位置，$(i,j)$走向两个位置，$(i+1,j)$和$(i+1,j+1)$，我们只要取两个位置的更大的值加上这个位置原来的值，就是$f_{i,j}$的答案。如果递归到最后一层答案就只有一个数字了，$f_{n,i}=a_{n,i}$。
 
       由上面的讨论可以明白，在这道题中，位置$(i,j)$是**状态**，向下走向两个位置是**状态的转移**，取两个位置的更大的值加上这个位置原来的值就是在描述**状态转移方程**。
+      <!-- .element: class="fragment" -->
   
       `$$\begin{aligned}
       f_{i,j} = \max\{f_{i+1,j}, f_{i+1,j+1}\}+a_{i,j}
       \end{aligned}$$`
+      <!-- .element: class="fragment" -->
   
       `$$Ans = f_{1,1}$$`
+      <!-- .element: class="fragment" -->
   
       发现递归只会在**回溯**的时候得到新答案，如果倒着枚举行数，就不需要函数递归了。
+      <!-- .element: class="fragment" -->
   
       ```cpp
       rev_rep(i,n,1){
@@ -375,6 +393,7 @@ rep(i,1,n){
       }
       printf("%d\n", f[1][1]);
       ```
+      <!-- .element: class="fragment" -->
   
       ---
       <!-- .slide: data-state="triangle-draw" -->
@@ -409,14 +428,17 @@ rep(i,1,n){
       <!-- .element: style="width:600px;float:right"-->
 
       ---
+      <!-- .slide: style="font-size:25px" -->
   
       实际上从下向上走也可以得到结果，正确性是显然的。但是注意在每一行的边界位置上，只有一个方向可以转移。我们可以特判，也可以把无法转移的位置赋值成$-\inf$。
   
       `$$\begin{aligned}
       f_{i,j} = \max\{f_{i-1,j-1}, f_{i-1,j}\}+a_{i,j}
       \end{aligned}$$`
+      <!-- .element: class="fragment" -->
   
       `$$Ans = \max_i f_{n,i}$$`
+      <!-- .element: class="fragment" -->
 
       ```cpp
       rep(i,1,n){
@@ -429,8 +451,10 @@ rep(i,1,n){
       rep(i,1,n) ans = max(ans, f[n][i]);
       printf("%d\n", ans);
       ```
+      <!-- .element: class="fragment" -->
   
       暴力搜索复杂度是$2^n$，而dp做法复杂度只有$n^2$，可以看出，动态规划能把复杂度从**指数级**优化到**多项式级**。
+      <!-- .element: class="fragment" -->
   </script></section>
 </section>
 <section>
@@ -467,24 +491,33 @@ rep(i,1,n){
       
       输出区域中最长滑坡的长度。
       
-      ### 输入 #1
+      <div>
+
+        ### 输入 #1
+        
+        ```txt
+        5 5
+        1 2 3 4 5
+        16 17 18 19 6
+        15 24 25 20 7
+        14 23 22 21 8
+        13 12 11 10 9
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
-      ```
-      5 5
-      1 2 3 4 5
-      16 17 18 19 6
-      15 24 25 20 7
-      14 23 22 21 8
-      13 12 11 10 9
-      ```
-      
-      ### 输出 #1
-      
-      ```
-      25
-      ```
+      <div>
+
+        ### 输出 #1
+        
+        ```txt
+        25
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
       对于 $100\%$ 的数据，$1\leq N,M\leq 100$。
+      <!-- .element: style="clear:both"-->
 
       ---
       <!-- .slide: style="font-size:25px" -->
@@ -494,10 +527,13 @@ rep(i,1,n){
       `$$\begin{aligned}
       f_{i,j} = \max_{a_{i',j'}<a_{i,j}, |i'-i|+|j'-j|\le 1}\{f_{i',j'}\}+1
       \end{aligned}$$`
+      <!-- .element: class="fragment" -->
   
       `$$Ans = \max_{i,j} f_{i,j}$$`
+      <!-- .element: class="fragment" -->
   
       在这个例子中我们每个位置只有被第一次访问时得到答案，在之后的访问只会立刻返回结果。所以复杂度是$O(nm)$。原理同样是子问题的重复利用。
+      <!-- .element: class="fragment" -->
 
       ---
 
@@ -583,15 +619,19 @@ rep(i,1,n){
       ## LCS
 
       $f_{i,j}$表示$s$的前缀$i$和$t$的前缀$j$的LCS长度。如果$s_i$和$t_i$相同，LCS长度可以是$f_{i-1,j-1}$加$1$。
+      <!-- .element: class="fragment" -->
 
       其他位置$(x,y)$只要满足$x<i, y<j$就可以转移，这些没有直接贡献，答案不会增加，不过却是合法的转移。取两个最小转移$(i-1,j)$和$(i,j-1)$，可以表示从所有位置$(x,y)$的转移。
+      <!-- .element: class="fragment" -->
 
       `$$\begin{aligned}
       f_{i,j} &= f_{i-1,j-1}+1\qquad A_i=B_j\\
       f_{i,j} &= \max\{f_{i-1,j}, f_{i,j-1}\}
       \end{aligned}$$`
+      <!-- .element: class="fragment" -->
 
       `$$Ans = f_{n,m}$$`
+      <!-- .element: class="fragment" -->
 
       ```cpp
       rep(i,1,n){
@@ -602,6 +642,7 @@ rep(i,1,n){
       }
       printf("%d\n", f[n][m]);
       ```
+      <!-- .element: class="fragment" -->
 
       ---
       <!-- .slide: style="font-size:25px" -->
@@ -609,18 +650,24 @@ rep(i,1,n){
       ## LIS
 
       $f_i$表示**以第$i$个数为结尾**的LIS长度。初始为$1$。
+      <!-- .element: class="fragment" -->
 
       考虑转移，由于确定了结尾的数字，所以我们只要从小于$a_i$的状态里面选最长的加$1$就行了。(不过也可以发现$f_i$并不单调增加，和LCS不一样。)
+      <!-- .element: class="fragment" -->
 
       $Ans$取$f$数组最大值，不过也可以设$A_0 = -\inf,\quad A_{n+1} = \inf$，这样就不用额外考虑$f$数组初值和答案了。
+      <!-- .element: class="fragment" -->
 
       `$$A_0 = -\inf,\quad A_{n+1} = \inf$$`
+      <!-- .element: class="fragment" -->
 
       `$$\begin{aligned}
       f_i &= \max_{j<i}f_j+1\qquad A_j<A_i
       \end{aligned}$$`
+      <!-- .element: class="fragment" -->
 
       `$$Ans = f_{n+1}$$`
+      <!-- .element: class="fragment" -->
 
 ```cpp
 a[0] = -1e9, a[n+1] = 1e9;
@@ -631,6 +678,7 @@ rep(i,1,n+1){
 }
 printf("%d\n", f[n+1]);
 ```
+      <!-- .element: class="fragment" -->
 
   </script></section>
 </section>
@@ -656,7 +704,8 @@ printf("%d\n", f[n+1]);
 
       给定一个长度为$n$的序列$A$，定义点覆盖的价值是集合内价值和，求最小价值的点覆盖。
 
-      实际上，如果把序列取相反数，原序列的最大权独立集$=sum+$相反数序列的最小权点覆盖
+      实际上，有一个结论是，最大权独立集$=sum-$最小权点覆盖
+      <!-- .element: class="fragment" -->
 
       ---
 
@@ -664,16 +713,23 @@ printf("%d\n", f[n+1]);
         最大权独立集
 
         `$$\begin{aligned}
-        f_{0,0/1} &= 0\\
+        f_{1,0} &= 0\qquad f_{1,1} = a_1\\
         f_{i,0} &= \max(f_{i-1,0}, f_{i-1,1})\\
         f_{i,1} &= f_{i-1,0}+a_i
         \end{aligned}$$`
 
         `$$Ans = \max(f_{n,0}, f_{n,1})$$`
 
-        ```cpp
-        TODO
-        ```
+```cpp
+int n = ci();
+rep(i,1,n) a[i] = ci();
+f[1][0] = 0, f[1][1] = a[1];
+rep(i,2,n){
+	f[i][0] = max(f[i-1][0], f[i-1][1]);
+	f[i][1] = f[i-1][0]+a[i];
+}
+int mx = max(f[n][1], f[n][0]);
+```
       </div>
       <!-- .element: style="float:left;width:50%" -->
 
@@ -681,16 +737,23 @@ printf("%d\n", f[n+1]);
         最小权点覆盖
 
         `$$\begin{aligned}
-        f_{0,0} &= 0\qquad f_{0,1} = \inf\\
+        f_{1,0} &= 0\qquad f_{1,1} = a_1\\
         f_{i,1} &= \min(f_{i-1,0}, f_{i-1,1})+a_i\\
         f_{i,0} &= f_{i-1,1}
         \end{aligned}$$`
 
         `$$Ans = \min(f_{n,0}, f_{n,1})$$`
         
-        ```cpp
-        TODO
-        ```
+```cpp
+int n = ci();
+rep(i,1,n) a[i] = ci();
+g[1][0] = 0, g[1][1] = a[1];
+rep(i,2,n){
+	g[i][0] = g[i-1][1];
+	g[i][1] = min(g[i-1][0], g[i-1][1])+a[i];
+}
+int mn = min(g[n][0], g[n][1]);
+```
       </div>
       <!-- .element: style="float:left;width:50%" -->
 
@@ -703,20 +766,31 @@ printf("%d\n", f[n+1]);
       <!-- .element: class="small" -->
 
       以最大权独立集为例:
+      <!-- .element: class="fragment" -->
 
       $f_{i,1} = f_{i-1,0}+a_i$，这个转移只有一个固定的转移。我们直接用代入法化简。
+      <!-- .element: class="fragment" -->
 
       `$$\begin{aligned}
       & f_{i,0} &&= \max(f_{i-1,0}, f_{i-1,1})\\
       \Rightarrow\quad & f_{i,0} &&= \max(f_{i-1,0}, f_{i-2,0}+a_{i-1})\\
       \Rightarrow\quad & f_{i} &&= \max(f_{i-1}, f_{i-2}+a_{i-1})
       \end{aligned}$$`
+      <!-- .element: class="fragment" -->
 
       化简之后的式子不再需要01那维了。
+      <!-- .element: class="fragment" -->
 
-      ```cpp
-      TODO
-      ```
+```cpp
+int n = ci();
+rep(i,1,n) a[i] = ci();
+f[0] = 0, f[1] = 0;
+rep(i,2,n+1){
+	f[i] = max(f[i-1], f[i-2]+a[i-1]);
+}
+int mx = max(f[n], f[n+1]);
+```
+      <!-- .element: class="fragment" -->
 
   </script></section>
 </section>
@@ -738,21 +812,26 @@ printf("%d\n", f[n+1]);
 
       ---
       <!-- .slide: style="font-size:25px" -->
+      状态定义`f[i][j]`表示，从前向后考虑到第$i$个物品，前$i$个物品中被选择物品的总体积是$j$。
 
-      TODO markdown
-      状态定义f[i][j]表示，从前向后考虑到第i个物品，前i个物品中被选择物品的总体积是j。
-
-      其实，每个f[i][j]都可以看成**原问题N=i, M=j的答案**。
+      其实，每个`f[i][j]`都可以看成**原问题$N=i, M=j$的答案**。
+      <!-- .element: class="fragment" -->
 
       ```cpp
       f[i][j] = max(f[i-1][j], f[i-1][j-c[i]]+v[i]);
       ```
+      <!-- .element: class="fragment" -->
 
       接下来是状态的解释:
+      <!-- .element: class="fragment" -->
 
-      * 虽然这个问题的物品顺序不重要，但是dp需要一个确定的顺序，所以状态里的**前i个**是必要的。当然我们可以贪心的先选性价比更高的物品，不过复杂度没有改进，因此原始顺序对解决问题是充分的。
+      <div>
 
-      * 关于体积j，这个是背包问题的一个抽象。我们在考虑子问题时，并不关心之前装了什么物品，只要知道**总体积是多少**，就能进行下一步物品放不放的决策，所以这个状态下物品可以抽象成体积。
+        * 虽然这个问题的物品顺序不重要，但是dp需要一个确定的顺序，所以状态里的**前$i$个**是必要的。当然我们可以贪心的先选性价比更高的物品，不过复杂度没有改进，因此原始顺序对解决问题是充分的。
+        
+        * 关于体积$j$，这个是背包问题的一个抽象。我们在考虑子问题时，并不关心之前装了什么物品，只要知道**总体积是多少**，就能进行下一步物品放不放的决策，所以这个状态下物品可以抽象成体积。
+      </div>
+      <!-- .element: class="fragment" -->
 
       ---
 
@@ -770,8 +849,10 @@ printf("%d\n", f[n+1]);
       ```
 
       详细讲一下转移。
+      <!-- .element: class="fragment" -->
 
-      很明显这里的方程相较于01背包方程，它可以从**同一个$i$**转移而来。这是因为每一种物品可以取多次，如果我们先取一次，我们发现只有剩余体积改变了，而物品i仍然可以取，直到已经放不下物品i为止。所以从同一个$i$转移。
+      很明显这里的方程相较于01背包方程，它可以从**同一个$i$**转移而来。这是因为每一种物品可以取多次，如果我们先取一次，我们发现只有剩余体积改变了，而物品$i$仍然可以取，直到已经放不下物品$i$为止。所以从同一个$i$转移。
+      <!-- .element: class="fragment" -->
 
       ---
 
@@ -824,6 +905,8 @@ rep(i,1,n){
 
       有多少种长度为$n$的字符串$s$，满足$s$仅由`{A,B,C}`构成，且$s$中未出现过`"ABC"`
 
+      答案很大，对$1e9+7$取模，$10^9+7$是一个质数。
+
       ---
       <!-- .slide: style="font-size:25px" -->
 
@@ -846,10 +929,25 @@ rep(i,1,n){
       \end{aligned}$$`
 
       从dp方程我们也能发现，有一种不满足条件的情况没有"转移出口"，可以看出在dp下这一部分被筛掉了。至于$Ans$等于什么这个问题很显然。
+      <!-- .element: class="fragment" -->
 
-      ```cpp
-      TODO
-      ```
+```cpp
+const int mod = 1e9+7;
+ll f[N][3];
+
+int main(){
+	int n = ci();
+	f[0][0] = 1;
+	rep(i,1,n){
+		f[i][0] = (f[i-1][0]+f[i-1][1]+f[i-1][2])*2%mod;
+		f[i][1] = f[i-1][0];
+		f[i][2] = f[i-1][1];
+	}
+	printf("%lld\n", f[n][0]+f[n][1]+f[n][2]);
+	return 0;
+}
+```
+      <!-- .element: class="fragment" -->
 
       ---
 
@@ -857,10 +955,21 @@ rep(i,1,n){
       <!-- .element: style="float:left;margin-left:200px" -->
 
       这道题也可以dp"筛掉"的个数，也就是出现过`"ABC"`的字符串个数，答案是$3^n-Ans$。
+      <!-- .element: class="fragment" -->
 
-      ```cpp
-      TODO
-      ```
+```cpp
+int n = ci();
+f[0][0] = 1;
+rep(i,1,n){
+	f[i][0] = (f[i-1][0]+f[i-1][1]+f[i-1][2])*2%mod;
+	f[i][1] = f[i-1][0];
+	f[i][2] = f[i-1][1];
+	f[i][3] = (f[i-1][1]+f[i-1][3]*3)%mod;
+}
+printf("%lld\n", qpow(3,n)-f[n][3]+mod)%mod);
+// qpow是快速幂, 不过你可以把3连乘n次来代替
+```
+      <!-- .element: class="fragment" -->
 
   </script></section>
 </section>
@@ -1024,9 +1133,27 @@ rep(i,1,n){
 
       ---
 
-      ```cpp
-      TODO
-      ```
+```cpp [|4-6,8,11-13|9,10|16,17]
+int n = ci();
+rep(i,1,n) a[i] = a[i+n] = ci();
+rep(i,1,n+n) sum[i] = sum[i-1]+a[i];
+rep(len,2,n){
+	rep(j,len,n+n){
+		int i = j-len+1;
+		g[i][j] = 1e9;
+		rep(k,i,j-1){
+			f[i][j] = max(f[i][j],f[i][k]+f[k+1][j]+sum[j]-sum[i-1]);
+			g[i][j] = min(g[i][j],g[i][k]+g[k+1][j]+sum[j]-sum[i-1]);
+		}
+	}
+}
+int ans1 = inf, ans2 = 0;
+rep(i,0,n){
+	ans1 = min(ans1,g[i][i+n-1]),
+	ans2 = max(ans2,f[i][i+n-1]);
+}
+printf("%d\n%d\n",ans1,ans2);
+```
 
   </script></section>
 </section>
@@ -1077,9 +1204,22 @@ rep(i,1,n){
       ---
       <!-- .slide: style="font-size:25px" -->
 
-      ```cpp
-      TODO
-      ```
+```cpp
+bool f[N];
+bool brute_force(int n,int m){
+	f[0] = 0, f[1] = 1;
+	rep(i,2,n){
+		f[i] = 0;
+		rep(j,max(0,i-m),i-1) if( f[j]==0 ){
+			f[i] = 1; break;
+		}
+	}
+	return f[n];
+}
+```
+      
+      通过输出打表，得到规律是$f_i=0$当且仅当`i%(m+1)==0`
+      <!-- .element: class="fragment" -->
 
       题外话:作为一道大多数人都会的小学奥数题，有一个很流传很广的必胜策略：每次对方取$k$个，就取$m+1−k$个，第一次取$n\mod(m+1)$个
       <!-- .element: class="fragment" -->
@@ -1098,6 +1238,17 @@ rep(i,1,n){
       f_{i,j} &\leftarrow f_{i,j-k}\\
       f_{i,j} &\leftarrow f_{i-k,j-k}
       \end{aligned}$$`
+      <!-- .element: class="fragment" -->
+
+      ```cpp
+      rep(i,0,n){
+      	rep(j,0,n){
+      		rep(k,1,min(i,j)) if( f[i-k][j-k]==0 ){
+      			f[i][j] = 1; break;
+      		}
+      	}
+      }
+      ```
       <!-- .element: class="fragment" -->
 
       <div id="wythoff"></div>
@@ -1128,10 +1279,10 @@ rep(i,1,n){
       ---
       <!-- .slide: style="font-size:25px" -->
 
-      如果用$S$表示已经选择的物品的集合，可以把集合状态压缩成一个二进制数，如果物品$i\in S$，那么在$S$的第$i$位置$1$。所以$S$的大小在$[0,2^n)$范围内，对于$n=18$，$2^{18}=262144$，大小是足够的。
+      如果用$S$表示已经选择的物品的集合，可以把**集合**状态压缩成一个二进制数，如果物品$i\in S$，那么在$S$的第$i$位置$1$。所以$S$的大小在$[0,2^n)$范围内，对于$n=18$，$2^{18}=262144$，大小是足够的。
       <!-- .element: class="fragment" -->
 
-      答案数(组数)不会大于$18$，所以可以把答案数记为状态，$f_{i,j,S}$表示组数是第$i$组，现有总体积是$j$，已经选择的集合是$S$，这样的状态是否可行。
+      答案数(组数)不会大于$18$，所以可以把**答案数记为状态**，$f_{i,j,S}$表示组数是第$i$组，现有总体积是$j$，已经选择的集合是$S$，这样的状态是否可行。
       <!-- .element: class="fragment" -->
 
       当然这道题不能这样做，因为体积太大了。我们发现对于$i$和$S$确定的所有状态，当前总体积$j$更小的一定更优，所以可以把$j$变成dp数组代表的值。
@@ -1140,19 +1291,21 @@ rep(i,1,n){
       ---
       <!-- .slide: style="font-size:25px" -->
 
-      现在重新定义状态$f_{i,S}$，表示组数是第$i$组，已经选择的集合是$S$，这样的状态的最小体积是多少。
-      【TODO:方程好像写错了】
+      现在重新定义状态$f_{i,S}$，表示组数是第$i$组，已经选择物品的集合是$S$，这样的状态的最小体积是多少。
       <!-- .element: class="fragment" -->
 
       <div>
 
         `$$\begin{aligned}
-        f_{i,S\cup\{t\}} &\leftarrow \min_{t\notin S} f_{i,S}+w_i \quad &f_{i,S}+w_i\le W\\
-        f_{i+1,S\cup\{t\}} &\leftarrow \min_{t\notin S} f_{i,S}+w_i \quad &f_{i,S}+w_i>W
+        f_{i,S} &\leftarrow \min_{t\in S} f_{i,S\setminus\{t\}}+w_t \quad &f_{i,S\setminus\{t\}}+w_t\le W\\
+        f_{i+1,S} &\leftarrow \min_{t\in S} f_{i,S\setminus\{t\}}+w_t \quad &f_{i,S\setminus\{t\}}+w_t>W
         \end{aligned}$$`
         
         `$$Ans = [f_{i,U}\le W] \qquad U=\{1,2,...,n\}$$`
       </div>
+      <!-- .element: class="fragment" -->
+
+      复杂度$O(n^22^n)$
       <!-- .element: class="fragment" -->
 
       ---
@@ -1172,10 +1325,52 @@ rep(i,1,n){
       <!-- .element: class="fragment" -->
 
       ---
+      <!-- .slide: style="font-size:25px" -->
 
-      ```cpp
-      TODO
-      ```
+      UPDATE
+
+      上面的做法已经可以通过本题了，不过有更好的做法。
+
+      考虑这样的想法，既然我们可以得到选择集合S装进i组的**剩余最小体积**，我们能不能直接得到选择集合S的**最小组数**，同时让剩余体积最小。
+      <!-- .element: class="fragment" -->
+
+      改进做法:
+      <!-- .element: class="fragment" -->
+
+      使用`pair`保存dp，第一关键字是组数，第二关键字是当前体积。比较大小先比较第一关键字，再比较第二关键字
+      <!-- .element: class="fragment" -->
+
+      `$$\begin{aligned}
+      f_S &\leftarrow \min_{t\in S} && \text{if} \quad f_{S\setminus\{t\}}.second+w_t\le W &&& \langle first,second+w_t \rangle\\
+      & && \text{else} &&& \langle first+1,w_t\rangle
+      \end{aligned}$$`
+      <!-- .element: class="fragment" -->
+
+      ---
+
+```cpp
+pair<int,int> f[N];
+
+int n = ci(), W = ci();
+rep(i,1,n) w[i] = ci();
+f[0].first = 0, f[0].second = 1e9+100;
+int U = (1<<n)-1;
+rep(S,1,U){
+	rep(i,1,n) if ( S&(1<<(i-1)) ){
+		int I = 1<<(i-1);
+		if( f[S^I].second+w[i] <= W ){
+			tmp = make_pair(f[S^I].first, f[S^I].second+w[i]);
+ 			if( f[S]>tmp ) f[S] = tmp;
+		}else{
+			tmp = make_pair(f[S^I].first+1, w[i]);
+			if( f[S]>tmp ) f[S] = tmp;
+		}
+	}
+}
+printf("%d", f[U].first);
+```
+
+      复杂度$O(n2^n)$
 
   </script></section>
 </section>
@@ -1281,19 +1476,47 @@ rep(i,1,n){
 
       没有上司的舞会代码
 
-      ```cpp
-      TODO
-      ```
+```cpp
+struct Edge{ int to; };
+vector<Edge> G[N];
+void add(int x, int y){
+	G[x].push_back((Edge){y});
+	G[y].push_back((Edge){x});
+}
+
+int a[N];
+int f[N][2];
+
+void dfs(int u, int fa){
+	for(auto e:G[u]){
+		int v = e.to;
+		if( v==fa ) continue;
+		dfs(v,u);
+		f[u][0] += max(f[v][0], f[v][1]);
+		f[u][1] += f[v][0];
+	}
+	f[u][1] += a[u];
+}
+
+int main(){
+	int n = ci();
+	rep(i,1,n) a[i] = ci();
+	rep(i,1,n-1) add(ci(), ci());
+	dfs(1,0);
+	printf("%d\n", max(f[1][0], f[1][1]));
+	return 0;
+}
+```
   
   </script></section>
 </section>
 <section>
   <section data-markdown=""><script type="text/template">
-      ## DAG上dp、拓扑排序
+      ## DAG上dp
   
       DAG上的dp，在dfs或者拓扑排序的过程中维护dp数组。
   
-      CF919D Substring - 洛谷 | 计算机科学教育新生态
+      CF919D Substring - 洛谷 | 计算机科学教育新生态  
       https://www.luogu.com.cn/problem/CF919D
 
       给你一个有向图，每个点有一个小写字母权值
@@ -1317,41 +1540,60 @@ rep(i,1,n){
       
       Output a single line with a single integer denoting the largest value. If the value can be arbitrarily large, output -1 instead.
       
-      ### 输入 #1
+      <div>
+
+        ### 输入 #1
+        
+        ```txt
+        5 4
+        abaca
+        1 2
+        1 3
+        3 4
+        4 5
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
-      ```
-      5 4
-      abaca
-      1 2
-      1 3
-      3 4
-      4 5
-      ```
+      <div>
+
+        ### 输出 #1
+        
+        ```txt
+        3
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
+
+      <div></div>
+      <!-- .element: style="clear:both"-->
       
-      ### 输出 #1
+      <div>
+
+        ### 输入 #2
+        
+        ```txt
+        6 6
+        xzyabc
+        1 2
+        3 1
+        2 3
+        5 4
+        4 3
+        6 4
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
-      ```
-      3
-      ```
-      
-      ### 输入 #2
-      
-      ```
-      6 6
-      xzyabc
-      1 2
-      3 1
-      2 3
-      5 4
-      4 3
-      6 4
-      ```
-      
-      ### 输出 #2
-      
-      ```
-      -1
-      ```
+      <div>
+
+        ### 输出 #2
+        
+        ```txt
+        -1
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
 
       ---
       <!-- .slide: style="font-size:25px" -->
@@ -1379,15 +1621,57 @@ rep(i,1,n){
       判断环的方法，当然可以拓扑排序。
       <!-- .element: class="fragment" -->
 
-      我们也可以dfs判环，在访问 u 的子节点 v 的过程中，保持 vis_u 为 -1，如果从 v 开始遍历能遍历到 u 即 vis_u 为 -1 时，说明有环。如果遍历完了 u 的所有子节点都没有遍历到 u，说明 u 及 v 都没有环，可以设为 1，下次遍历到就不用遍历了。
-      TODO markdown
+      我们也可以dfs判环，在访问 $u$ 的子节点 $v$ 的过程中，保持 $vis_u$ 为 $-1$，如果从 $v$ 开始遍历能遍历到 $u$ 即 $vis_u$ 为 $-1$ 时，说明有环。如果遍历完了 $u$ 的所有子节点都没有遍历到 $u$，说明 $u$ 及 $v$ 都没有环，可以设为 $1$，下次遍历到就不用遍历了。
       <!-- .element: class="fragment" -->
 
       ---
 
-      ```cpp []
-      TODO 27遍dfs
-      ```
+```cpp []
+char vis[N];
+bool hasCycle = 0;
+void chkCycle(int u) {
+	vis[u] = -1;
+	for(auto e:G[u]){
+		int v = e.to;
+		if( vis[v]==-1 ) hasCycle = 1;
+		if( vis[v] ) continue;
+		chkCycle(v);
+	}
+	vis[u] = 1;
+}
+
+char curChar;
+char s[N];
+int f[N];
+int dfs(int u){
+	if( vis[u] ) return f[u];
+	vis[u] = 1, f[u] = 0;
+	for(auto e:G[u]){
+		int v = e.to;
+		f[u] = max(f[u], dfs(v));
+	}
+	return f[u] += s[u]==curChar;
+}
+
+int main(){
+	int n = ci(), m = ci();
+	scanf("%s", s+1);
+	rep(i,1,m){
+		int x=ci(), y=ci();
+		add(x,y);
+	}
+	rep(i,1,n) chkCycle(i);
+	if( hasCycle ){ puts("-1"); return 0; }
+	int ans = 0;
+	rep(cur,'a','z'){
+		curChar = cur;
+		memset(vis, 0, n+1);
+		rep(i,1,n) ans = max(ans, dfs(i));
+	}
+	printf("%d\n", ans);
+	return 0;
+}
+```
 
       ---
       <!-- .slide: style="font-size:25px" -->
@@ -1510,7 +1794,7 @@ rep(i,1,n){
         1 99
         ```
       </div>
-      <!-- .element: style="float:left;margin:0 200px" -->
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
         
       <div>
 
@@ -1520,7 +1804,7 @@ rep(i,1,n){
         9 20 20 20 20 20 20 20 20 20
         ```
       </div>
-      <!-- .element: style="float:left;margin:0 200px;width:400px" -->
+      <!-- .element: style="float:left;margin:0 150px;width:350px" -->
       
       $1\le a\le b\le 10^{12}$
       <!-- .element: style="clear:both"-->
@@ -1529,10 +1813,13 @@ rep(i,1,n){
 
       ## 思路:
 
+      *表示0-9任选  
+      ?表示有上限限制
+      <!-- .element: style="float:right;padding:4px;margin-right:250px;font-size:14px;background-color:grey" -->
+
       ```mermaid
       flowchart TD
         d1[233]
-        t[*表示0-9任选<br/>?表示有上限限制]
         d21[**]
         d22[1**]
         d23[2??]
@@ -1556,8 +1843,7 @@ rep(i,1,n){
         d34 --> d43
         d34 --> d44
         class d1,d21,d22,d23,d31,d32,d33,d34,d41,d42,d43,d44 d;
-        classDef d stroke:none,fill:aliceblue;
-        style t stroke:none,fill:inherit,color:white;
+        classDef d stroke:none,fill:aliceblue,font-size:0.9em;
       ```
 
       ---
@@ -1748,7 +2034,7 @@ int main(){
   
       樱花
   
-      P1833 樱花 - 洛谷 | 计算机科学教育新生态
+      P1833 樱花 - 洛谷 | 计算机科学教育新生态  
       https://www.luogu.com.cn/problem/P1833
 
       ---
@@ -1775,7 +2061,7 @@ int main(){
       <!-- .slide: style="font-size:25px" -->
       ## 排列数递推 + 教你怎么使用oeis
   
-      P6162 [Cnoi2020]四角链 - 洛谷 | 计算机科学教育新生态
+      P6162 [Cnoi2020]四角链 - 洛谷 | 计算机科学教育新生态  
       https://www.luogu.com.cn/problem/P6162
   
       四角链可以抽象为 $1\times (n - 1)$ 网格，每个格子被分别编号为 $1$, $2$, .... , $n-1$。
@@ -1805,70 +2091,150 @@ int main(){
       
       一行，一个整数，表示答案。
       
-      ### 样例输入 #1
+      <div>
+
+        ### 输入 #1
+        
+        ```txt
+        10 5
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
-      ```
-      10 5
-      ```
+      <div>
+
+        ### 输出 #1
+        
+        ```txt
+        42525
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
+
+      <div></div>
+      <!-- .element: style="clear:both"-->
       
-      ### 样例输出 #1
+      <div>
+
+        ### 输入 #2
+        
+        ```txt
+        642 357
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
-      ```
-      42525
-      ```
+      <div>
+
+        ### 输出 #2
+        
+        ```txt
+        409821948
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
+
+      <div></div>
+      <!-- .element: style="clear:both"-->
       
-      ### 样例输入 #2
+      <div>
+
+        ### 输入 #3
+        
+        ```txt
+        666666 233333
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
-      ```
-      642 357
-      ```
-      
-      ### 样例输出 #2
-      
-      ```
-      409821948
-      ```
-      
-      ### 样例输入 #3
-      
-      ```
-      666666 233333
-      ```
-      
-      ### 样例输出 #3
-      
-      ```
-      791003566
-      ```
+      <div>
+
+        ### 输出 #3
+        
+        ```txt
+        791003566
+        ```
+      </div>
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
       $0 \le k < n \le 10^6$。
+      <!-- .element: style="clear:both"-->
 
       ---
       <!-- .slide: style="font-size:25px" -->
   
-      `$$f_{n,k}=f_{n-1,k}+(n-k+1)f_{n-1,k-1}$$`
+      `$$f_{i,j}=f_{i-1,j}+(i-j)f_{i-1,j-1}$$`
   
-      ```cpp
-      TODO
-      ```
+```cpp
+int n = 10, k = 10;
+f[0][0] = 1;
+rep(i,1,n){
+	f[i][0] = 1;
+	printf("1 ");
+	rep(j,1,k){
+		f[i][j] = (f[i-1][j]+f[i-1][j-1]*(i-j))%mod;
+		printf("%lld ", f[i][j]);
+	} puts("");
+}
+```
 
       打表得出数列是
 
-      ```txt
-      ```
+```txt
+1
+1 1
+1 3 1
+1 6 7 1
+1 10 25 15 1
+1 15 65 90 31 1
+1 21 140 350 301 63 1
+1 28 266 1050 1701 966 127 1
+1 36 462 2646 6951 7770 3025 255 1
+1 45 750 5880 22827 42525 34105 9330 511 1
+```
 
       ---
       <!-- .slide: data-background-iframe="https://oeis.org" data-background-interactive-->
 
       ---
 
-      发现是斯特林数
+      发现是第二类斯特林数
 
-      TODO
+      `$$f_{n-1,k}=S(n,n-k+1)$$`
 
-      ```cpp
-      TODO
-      ```
+```cpp
+ll qpow(ll a,ll b,int mod=mod){
+	ll ans = 1;
+	for(; b; b>>=1,a=a*a%mod) if( b&1 ){
+		ans = ans*a%mod;
+	} return ans;
+}
+ll inv(ll x,int mod=mod){ return qpow(x,mod-2,mod); }
+
+ll fac[N],facInv[N];
+void init_fac(int n){
+	fac[0] = 1;
+	rep(i,1,n) fac[i]=fac[i-1]*i%mod;
+	facInv[n] = inv(fac[n]);
+	rev_rep(i,n,1) facInv[i-1]=facInv[i]*i%mod;
+}
+ll comp(ll n,ll m){
+	if( n<m ) return 0;
+	return fac[n]*facInv[m]%mod*facInv[n-m]%mod;
+}
+
+int main(){
+	int n = ci(), k = ci();
+	init_fac(n);
+	int m = n-k, ans = 0;
+	rep(i,0,m){
+		int d = (i&1)?-1:1;
+		ans = (ans+d*C(m,i)%mod*qpow(m-i,n)%mod+mod)%mod;
+	}
+	printf("%lld\n", ans*facInv[m]%mod);
+    return 0;
+}
+```
   </script></section>
 </section>
 <section>
@@ -1878,7 +2244,7 @@ int main(){
       热知识:长度为$n$的bool数组大小是$4n$bit的。
       <!-- .element: class="small" -->
 
-      货船
+      货船  
       https://ac.nowcoder.com/acm/problem/236172
  
       有$n$个货物，需要装入货船，第$i$个货物的重量是$w_i$。货船的最大载重量是$A$，请问在不超过货船最大载重量的前提下，一次最多能运送多少重量的货物。
@@ -1915,7 +2281,7 @@ int main(){
       <!-- .slide: style="font-size:25px" -->
       ## 状压dp 之 子集dp
   
-      P5911 [POI2004]PRZ - 洛谷 | 计算机科学教育新生态
+      P5911 [POI2004]PRZ - 洛谷 | 计算机科学教育新生态  
       https://www.luogu.com.cn/problem/P5911
   
       ## 题目背景
@@ -1950,7 +2316,7 @@ int main(){
         18 50
         ```
       </div>
-      <!-- .element: style="float:left;margin:0 200px" -->
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
       <div>
 
@@ -1960,7 +2326,7 @@ int main(){
         42
         ```
       </div>
-      <!-- .element: style="float:left;margin:0 200px" -->
+      <!-- .element: style="float:left;margin:0 150px;width:300px" -->
       
       $100\le W \le400$ ，$1\le n\le 16$，$1\le t\le50$，$10\le w\le100$。
       <!-- .element: style="clear:both"-->
@@ -2045,7 +2411,7 @@ rep(i,1,n){
       <!-- .slide: style="font-size:25px" -->
       ## 乘法转整除
   
-      P5307 [COCI2018-2019#6] Mobitel - 洛谷 | 计算机科学教育新生态
+      P5307 [COCI2018-2019#6] Mobitel - 洛谷 | 计算机科学教育新生态  
       https://www.luogu.com.cn/problem/P5307
   
       他画了一个$n$行$m$列的矩阵，每个格子里都有一个正整数。
@@ -2133,13 +2499,13 @@ rep(i,1,n){
       </div>
     </div>
 
+    <script src="plugin/mermaid/mermaid.min.js"></script>
     <script src="dist/reveal.js"></script>
     <script src="plugin/notes/notes.js"></script>
     <script src="plugin/markdown/markdown.js"></script>
     <script src="plugin/highlight/highlight.js"></script>
     <script src="plugin/math/math.js"></script>
     <script src="plugin/svg/svg.js"></script>
-    <script src="plugin/mermaid/mermaid.min.js" type="application/javascript"></script>
     <script>
       // More info about initialization & config:
       // - https://revealjs.com/initialization/
