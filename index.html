@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>reveal.js</title>
+  <title>ACM动态规划 - z7z_Eta</title>
 
   <link rel="stylesheet" href="dist/reset.css">
   <link rel="stylesheet" href="dist/reveal.css">
@@ -43,6 +43,9 @@
 .reveal .mermaid{
   width:fit-content;
 }
+.reveal .svg, #wythoff{
+  border:1px solid var(--r-link-color-dark);
+}
 .reveal .mermaid > svg{
 	width:450px;
 }
@@ -72,6 +75,7 @@
     > DP就是Dalao Power的缩写。--jz集训
 
     受命以来，伏案数月，想法屡有不通，寻题几经绝编，终作此篇章，意在报以算法之魂。不求尽其详，助君略动规大观，解动规之惑也。
+    <!-- .element: class="small" -->
 
     课件题目取自luogu，牛客，codeforces和atcoder。请同学提前注册账号。
     <!-- .element: class="small" -->
@@ -79,15 +83,24 @@
 <section>
   <section>
     <h2>About Me</h2>
-    <p class="small">为什么会变成这样呢...第一次写了这么长的课件。修了很多很多的选修。两件麻烦<sup>面倒くさいな</sup>事情重合在一起。而这两份事情，又给我带来更多的麻烦<sup>面倒くさい</sup>。得到的，本该是像噩梦一般自闭的时间...但是，为什么，会变成这样呢...</p>
-    <p class="small">最喜欢的代码编辑器是Vim。不不不，这种难用的编辑器绝对不能提倡吧！这可是要把萌新拉入Linux巨坑啊。不过，Vim很有趣呢。你用Vim写题吗？是的。写ACM题，也写点网页摸鱼。别一脸飒爽地对新生说这种乱七八糟的事情啊！新生可是要学算法的！↗そうなんだ↗...不过我也很喜欢摸鱼♥，所以不要紧的。
-    p>
-    <p class="small">自我介绍部分加入各种私货果然还是太奇怪了，在后面慢慢放×</p>
     <!-- <p>注释里面偷偷写一下自己的经历</p> -->
     <!-- <p>高中是石家庄二中，从高一开始学，只参加了一年NOIp和省选，最终省队线差一名无缘NOI</p> -->
     <!-- <p>icpc2021南京Ag icpc2021西安ec-final Cu</p> -->
   </section>
   <section>
+    <div class="r-stack">
+      <img class="fragment" src="public/白色相簿_1.png" alt="白色相簿_1.png">
+      <img class="fragment" src="public/白色相簿_2.png" alt="白色相簿_2.png">
+      <img class="fragment" src="public/白色相簿_3.png" alt="白色相簿_3.png">
+      <img class="fragment" src="public/白色相簿_4.png" alt="白色相簿_4.png">
+      <img class="fragment" src="public/白色相簿_5.png" alt="白色相簿_5.png">
+      <img class="fragment" src="public/白色相簿_6.png" alt="白色相簿_6.png">
+      <img class="fragment" src="public/白色相簿_7.png" alt="白色相簿_7.png">
+      <img class="fragment" src="public/白色相簿_8.png" alt="白色相簿_8.png">
+    </div>
+  </section>
+  <section>
+    <p class="small" style="position:absolute;left:50%;transform:translate(-50%,0)">最喜欢的代码编辑器是Vim。<p>
     <div class="r-stack">
       <img class="fragment" src="public/樱之诗_1.png" alt="樱之诗_1.png">
       <img class="fragment" src="public/樱之诗_2.png" alt="樱之诗_2.png">
@@ -311,6 +324,7 @@ rep(i,1,n){
       ## 数字三角形 [IOI1994] The_Triangle 
 
       https://www.luogu.com.cn/problem/P1216
+      <!-- .element: class="small" -->
 
       ### 题目描述
       
@@ -398,7 +412,7 @@ rep(i,1,n){
       ---
       <!-- .slide: data-state="triangle-draw" -->
   
-      <div id="triangle"></div>
+      <div id="triangle" class="svg"></div>
       <textarea id="triangle-input" cols="25" rows="5">3
       5
       2 1
@@ -462,6 +476,7 @@ rep(i,1,n){
       ## 滑雪 [SHOI 2002] Ski
   
       https://www.luogu.com.cn/problem/P1434
+      <!-- .element: class="small" -->
 
       ### 题目描述
       
@@ -571,7 +586,7 @@ rep(i,1,n){
       ---
       <!-- .slide: data-state="ski-draw" -->
 
-      <div id="ski"></div>
+      <div id="ski" class="svg"></div>
       <textarea id="ski-input" cols="25" rows="5">3 3
       1 1 3
       2 3 4
@@ -851,7 +866,7 @@ int mx = max(f[n], f[n+1]);
       详细讲一下转移。
       <!-- .element: class="fragment" -->
 
-      很明显这里的方程相较于01背包方程，它可以从**同一个$i$**转移而来。这是因为每一种物品可以取多次，如果我们先取一次，我们发现只有剩余体积改变了，而物品$i$仍然可以取，直到已经放不下物品$i$为止。所以从同一个$i$转移。
+      很明显这里的方程相较于01背包方程，它可以从 **同一个$i$** 转移而来。这是因为每一种物品可以取多次，如果我们先取一次，我们发现只有剩余体积改变了，而物品$i$仍然可以取，直到已经放不下物品$i$为止。所以从同一个$i$转移。
       <!-- .element: class="fragment" -->
 
       ---
@@ -868,11 +883,14 @@ int mx = max(f[n], f[n+1]);
 
 ```cpp
 rep(i,1,n){
-	rep(j,0,c[i]-1) f[i][j] = f[i-1][j]; // 放不下物品i
+	rep(j,0,c[i]-1) f[i][j] = f[i-1][j]; //放不下物品i
 	rep(j,c[i],m){
-		f[i][j] = max(f[i-1][j], f[i-1][j-c[i]]+v[i]);
+		f[i][j] = max(f[i-1][j],f[i-1][j-c[i]]+v[i]);
 	}
 }
+ll ans = 0;
+rep(j,0,m) ans = max(ans, f[n][j]);
+printf("%lld", ans);
 ```
       </div>
       <!-- .element: style="float:left;width:50%" -->
@@ -891,9 +909,12 @@ rep(i,1,n){
 rep(i,1,n){
 	rep(j,0,c[i]-1) f[i][j] = f[i-1][j];
 	rep(j,c[i],m){
-		f[i][j] = max(f[i-1][j], f[i][j-c[i]]+v[i]);
+		f[i][j] = max(f[i-1][j],f[i][j-c[i]]+v[i]);
 	}
 }
+ll ans = 0;
+rep(j,0,m) ans = max(ans, f[n][j]);
+printf("%lld", ans);
 ```
       </div>
       <!-- .element: style="float:left;width:50%" -->
@@ -943,7 +964,7 @@ int main(){
 		f[i][1] = f[i-1][0];
 		f[i][2] = f[i-1][1];
 	}
-	printf("%lld\n", f[n][0]+f[n][1]+f[n][2]);
+	printf("%lld\n", (f[n][0]+f[n][1]+f[n][2])%mod);
 	return 0;
 }
 ```
@@ -952,7 +973,7 @@ int main(){
       ---
 
       另一个思路:
-      <!-- .element: style="float:left;margin-left:200px" -->
+      <!-- .element: style="float:left;margin-left:200px;margin-right:50px" -->
 
       这道题也可以dp"筛掉"的个数，也就是出现过`"ABC"`的字符串个数，答案是$3^n-Ans$。
       <!-- .element: class="fragment" -->
@@ -964,9 +985,9 @@ rep(i,1,n){
 	f[i][0] = (f[i-1][0]+f[i-1][1]+f[i-1][2])*2%mod;
 	f[i][1] = f[i-1][0];
 	f[i][2] = f[i-1][1];
-	f[i][3] = (f[i-1][1]+f[i-1][3]*3)%mod;
+	f[i][3] = (f[i-1][2]+f[i-1][3]*3)%mod;
 }
-printf("%lld\n", qpow(3,n)-f[n][3]+mod)%mod);
+printf("%lld\n", (qpow(3,n)-f[n][3]+mod)%mod);
 // qpow是快速幂, 不过你可以把3连乘n次来代替
 ```
       <!-- .element: class="fragment" -->
@@ -1133,17 +1154,17 @@ rep(i,1,n){
 
       ---
 
-```cpp [|4-6,8,11-13|9,10|16,17]
+```cpp [|4-6,8,11-13|9,10|16,17|]
 int n = ci();
 rep(i,1,n) a[i] = a[i+n] = ci();
 rep(i,1,n+n) sum[i] = sum[i-1]+a[i];
 rep(len,2,n){
-	rep(j,len,n+n){
-		int i = j-len+1;
-		g[i][j] = 1e9;
-		rep(k,i,j-1){
-			f[i][j] = max(f[i][j],f[i][k]+f[k+1][j]+sum[j]-sum[i-1]);
-			g[i][j] = min(g[i][j],g[i][k]+g[k+1][j]+sum[j]-sum[i-1]);
+	rep(r,len,n+n){
+		int l = r-len+1; // 右端点-左端点+1 = len
+		g[l][r] = 1e9;
+		rep(k,l,r-1){
+			f[l][r] = max(f[l][r], f[l][k]+f[k+1][r]+sum[r]-sum[l-1]);
+			g[l][r] = min(g[l][r], g[l][k]+g[k+1][r]+sum[r]-sum[l-1]);
 		}
 	}
 }
@@ -1206,22 +1227,24 @@ printf("%d\n%d\n",ans1,ans2);
 
 ```cpp
 bool f[N];
-bool brute_force(int n,int m){
-	f[0] = 0, f[1] = 1;
-	rep(i,2,n){
+int main(){
+	int n = ci(), m = ci();
+	f[0] = 0;
+	rep(i,1,n){
 		f[i] = 0;
 		rep(j,max(0,i-m),i-1) if( f[j]==0 ){
 			f[i] = 1; break;
 		}
 	}
-	return f[n];
+	rep(i,1,n) printf("%d ", f[i]); puts("");
+	return 0;
 }
 ```
       
       通过输出打表，得到规律是$f_i=0$当且仅当`i%(m+1)==0`
       <!-- .element: class="fragment" -->
 
-      题外话:作为一道大多数人都会的小学奥数题，有一个很流传很广的必胜策略：每次对方取$k$个，就取$m+1−k$个，第一次取$n\mod(m+1)$个
+      题外话:作为一道大多数人都会的小学奥数题，有一个很流传很广的必胜策略：第一次取$n\mod(m+1)$个，每次对方取$k$个，就取$m+1−k$个
       <!-- .element: class="fragment" -->
 
       ---
@@ -1240,22 +1263,29 @@ bool brute_force(int n,int m){
       \end{aligned}$$`
       <!-- .element: class="fragment" -->
 
-      ```cpp
-      rep(i,0,n){
-      	rep(j,0,n){
-      		rep(k,1,min(i,j)) if( f[i-k][j-k]==0 ){
-      			f[i][j] = 1; break;
-      		}
-      	}
-      }
-      ```
+```cpp []
+int n = ci(), m = ci();
+f[0][0] = 0;
+rep(i,0,n){
+	rep(j,0,m){
+		rep(k,1,max(i,j)){
+			if( k<=min(i,j) && f[i-k][j-k]==0 ){ f[i][j] = 1; break; }
+			if( k<=i && f[i-k][j]==0 ){ f[i][j] = 1; break; }
+			if( k<=j && f[i][j-k]==0 ){ f[i][j] = 1; break; }
+		}
+	}
+	rep(j,0,m) printf("%d ", f[i][j]); puts("");
+}
+```
+      <!-- .element: class="fragment" -->
+      <!-- .element: style="float:left;width:730px;margin-left:150px" -->
+
+      <canvas id="wythoff" width="400" height="400"></canvas>
+      <!-- .element: style="background-color:black;position:absolute;right:0;top:20px" -->
       <!-- .element: class="fragment" -->
 
-      <div id="wythoff"></div>
-
-      TODO canvas
-
       根据打出来的表，可以总结通项公式
+      <!-- .element: style="clear:both"-->
       <!-- .element: class="fragment" -->
 
       通项公式：记 $\phi = \frac{1+\sqrt 5}{2}$，则 $a_i=\lfloor i\phi\rfloor,\quad b_i=\lfloor i\phi^2\rfloor$，$(a_i,b_i)$为必败点
@@ -1271,10 +1301,15 @@ bool brute_force(int n,int m){
       ## 状态压缩dp
 
       P3052 [USACO12MAR]Cows in a Skyscraper G
+      <!-- .element: class="small" -->
 
       https://www.luogu.com.cn/problem/P3052
+      <!-- .element: class="small" -->
 
-      给出$n$个物品，有体积$w_i(w_i\le 10^9)$，现把其分成若干组，要求每组总体积$\sum w_i\le W$，问最小组数。$(n\le 18)$
+      给出$n$个物品，有体积$w_i$，现把其分成若干组，要求每组总体积$\sum w_i\le W$，问最小组数。
+
+      $n\le 18$  
+      $w_i\le W,\quad W\le 10^9$
 
       ---
       <!-- .slide: style="font-size:25px" -->
@@ -1282,10 +1317,10 @@ bool brute_force(int n,int m){
       如果用$S$表示已经选择的物品的集合，可以把**集合**状态压缩成一个二进制数，如果物品$i\in S$，那么在$S$的第$i$位置$1$。所以$S$的大小在$[0,2^n)$范围内，对于$n=18$，$2^{18}=262144$，大小是足够的。
       <!-- .element: class="fragment" -->
 
-      答案数(组数)不会大于$18$，所以可以把**答案数记为状态**，$f_{i,j,S}$表示组数是第$i$组，现有总体积是$j$，已经选择的集合是$S$，这样的状态是否可行。
+      答案数(组数)不会大于$18$，所以可以把**答案数记为状态**，$f_{i,j,S}$表示组数是第$i$组，现有体积是$j$，已经选择的集合是$S$，这样的状态是否可行。每次$i+1$时，可以看做把现有体积归零。
       <!-- .element: class="fragment" -->
 
-      当然这道题不能这样做，因为体积太大了。我们发现对于$i$和$S$确定的所有状态，当前总体积$j$更小的一定更优，所以可以把$j$变成dp数组代表的值。
+      当然这道题不能这样做，因为体积太大了。我们发现对于$i$和$S$确定的所有状态，当前体积$j$更小的一定更优，所以可以把$j$变成dp数组代表的值。
       <!-- .element: class="fragment" -->
 
       ---
@@ -1297,15 +1332,12 @@ bool brute_force(int n,int m){
       <div>
 
         `$$\begin{aligned}
-        f_{i,S} &\leftarrow \min_{t\in S} f_{i,S\setminus\{t\}}+w_t \quad &f_{i,S\setminus\{t\}}+w_t\le W\\
-        f_{i+1,S} &\leftarrow \min_{t\in S} f_{i,S\setminus\{t\}}+w_t \quad &f_{i,S\setminus\{t\}}+w_t>W
+        f_{i,S\cup\{t\}} &\leftarrow \min_{t\notin S} f_{i,S}+w_t \quad &f_{i,S}+w_t\le W\\
+        f_{i+1,S\cup\{t\}} &\leftarrow \min_{t\in S} w_t \quad &f_{i}+w_t>W
         \end{aligned}$$`
         
         `$$Ans = [f_{i,U}\le W] \qquad U=\{1,2,...,n\}$$`
       </div>
-      <!-- .element: class="fragment" -->
-
-      复杂度$O(n^22^n)$
       <!-- .element: class="fragment" -->
 
       ---
@@ -1316,12 +1348,47 @@ bool brute_force(int n,int m){
 
       |||
       |-|-|
-      |`$S\cup\{t\}$`|`S\|(1<<(t-1))`|
       |$t\notin S$|`(S&(1<<(t-1)))==0`|
+      |`$S\cup\{t\}$`|`S\|(1<<(t-1))`|
       |$U$|`(1<<n)-1`|
       <!-- .element: class="fragment" -->
 
       $f$数组初值都设为$\inf$，就可以开始愉快地dp了。
+      <!-- .element: class="fragment" -->
+
+      ---
+
+```cpp []
+enum{N=19,NN=(1<<18)+5};
+
+int w[N],f[N][NN];
+
+int main(){
+	int n = ci(), W = ci();
+	rep(i,1,n) w[i] = ci();
+	int U = (1<<n)-1;
+	memset(f, 0x3f, sizeof(f));
+	f[1][0] = 0;
+	rep(i,1,n){
+		rep(S,0,U) if( f[i][S] <= W ){
+			rep(t,1,n) if( (S&(1<<(t-1)))==0 ){
+				int I = 1<<(t-1);
+				if( f[i][S]+w[t] <= W ){
+					f[i][S|I] = min(f[i][S|I], f[i][S]+w[t]);
+				}else{
+					f[i+1][S|I] = min(f[i+1][S|I], w[t]);
+				}
+			}
+		}
+	}
+	rep(i,1,n) if( f[i][U]<=W ){
+		printf("%d\n", i); break;
+	}
+	return 0;
+}
+```
+
+      复杂度$O(n^22^n)$
       <!-- .element: class="fragment" -->
 
       ---
@@ -1348,29 +1415,34 @@ bool brute_force(int n,int m){
 
       ---
 
-```cpp
-pair<int,int> f[N];
+```cpp []
+pair<int,int> f[NN];
 
-int n = ci(), W = ci();
-rep(i,1,n) w[i] = ci();
-f[0].first = 0, f[0].second = 1e9+100;
-int U = (1<<n)-1;
-rep(S,1,U){
-	rep(i,1,n) if ( S&(1<<(i-1)) ){
-		int I = 1<<(i-1);
-		if( f[S^I].second+w[i] <= W ){
-			tmp = make_pair(f[S^I].first, f[S^I].second+w[i]);
- 			if( f[S]>tmp ) f[S] = tmp;
-		}else{
-			tmp = make_pair(f[S^I].first+1, w[i]);
-			if( f[S]>tmp ) f[S] = tmp;
+int main(){
+	int n = ci(), W = ci();
+	rep(i,1,n) w[i] = ci();
+	int U = (1<<n)-1;
+	f[0].first = 0, f[0].second = 1e9+100;
+	rep(S,1,U){
+		f[S].first = 1e9;
+		rep(i,1,n) if ( S&(1<<(i-1)) ){
+			int I = 1<<(i-1);
+			if( f[S^I].second+w[i] <= W ){
+				auto tmp = make_pair(f[S^I].first, f[S^I].second+w[i]);
+	 			if( f[S]>tmp ) f[S] = tmp;
+			}else{
+				auto tmp = make_pair(f[S^I].first+1, w[i]);
+				if( f[S]>tmp ) f[S] = tmp;
+			}
 		}
 	}
+	printf("%d\n", f[U].first);
+	return 0;
 }
-printf("%d", f[U].first);
 ```
 
       复杂度$O(n2^n)$
+      <!-- .element: class="fragment" -->
 
   </script></section>
 </section>
@@ -2496,6 +2568,9 @@ rep(i,1,n){
 
     2021课件背包问题-TanJI
 </script></section>
+<section>
+  <img src="https://s2.vndb.org/sf/82/135682.jpg" alt="青空下的加缪.png">
+</section>
       </div>
     </div>
 
