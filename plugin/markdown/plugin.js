@@ -427,6 +427,7 @@ const Plugin = () => {
 				renderer = new marked.Renderer();
 
 				renderer.code = ( code, language ) => {
+          if( language=='mermaid' ) return '<pre class="mermaid">' + code + '</pre>';
 
 					// Off by default
 					let lineNumbers = '';
